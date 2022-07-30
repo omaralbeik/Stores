@@ -1,7 +1,6 @@
 import Blueprints
 import Foundation
-
-@_implementationOnly import SQLite
+import SQLite
 
 public final class MultiSQLiteStore<Object: Codable & Identifiable>: MultiObjectStore {
   public func save(_ object: Object) throws {

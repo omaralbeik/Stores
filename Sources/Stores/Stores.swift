@@ -1,11 +1,11 @@
 #if canImport(UserDefaultsStore)
-@_exported import UserDefaultsStore
+@_implementationOnly import UserDefaultsStore
 #endif
 
 #if canImport(FileSystemStore)
-@_exported import FileSystemStore
+@_implementationOnly import FileSystemStore
 #endif
 
 #if canImport(SQLiteStore)
-@_exported import SQLiteStore
+@_implementationOnly import SQLiteStore
 #endif
