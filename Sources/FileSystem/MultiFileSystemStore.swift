@@ -2,6 +2,8 @@ import Blueprints
 import Foundation
 
 public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiObjectStore {
+  public init() {}
+
   public func save(_ object: Object) throws {
     fatalError("Unimplemented")
   }
