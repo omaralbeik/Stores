@@ -11,7 +11,7 @@ let package = Package(
     .watchOS(.v6)
   ],
   products: [
-    .library(name: "Stores", targets: ["Stores"]),
+//    .library(name: "Stores", targets: ["Stores"]),
     .library(name: "Blueprints", targets: ["Blueprints"]),
     .library(name: "UserDefaultsStore", targets: ["UserDefaultsStore"]),
     .library(name: "FileSystemStore", targets: ["FileSystemStore"]),
@@ -24,16 +24,16 @@ let package = Package(
     )
   ],
   targets: [
-    .target(
-      name: "Stores",
-      dependencies: [
-        "Blueprints",
-        "UserDefaultsStore",
-        "FileSystemStore",
-        "SQLiteStore"
-      ],
-      path: "Sources/Stores"
-    ),
+//    .target(
+//      name: "Stores",
+//      dependencies: [
+//        "Blueprints",
+//        "UserDefaultsStore",
+//        "FileSystemStore",
+//        "SQLiteStore"
+//      ],
+//      path: "Sources/Stores"
+//    ),
     .target(
       name: "Blueprints",
       path: "Sources/Blueprints"
