@@ -8,12 +8,6 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   private let decoder = JSONDecoder()
   private let lock = NSRecursiveLock()
 
-  private func sync(action: () throws -> Void) rethrows {
-    lock.lock()
-    try action()
-    lock.unlock()
-  }
-
   /// Store's unique identifier.
   ///
   /// **Warning**: Never use the same identifier for two -or more- different stores.
@@ -32,6 +26,11 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
     self.store = store
   }
 
+  // MARK: - Store
+
+  /// Saves an object to store.
+  /// - Parameter object: object to be saved.
+  /// - Throws error: any encoding errors.
   public func save(_ object: Object) throws {
     try sync {
       let data = try encoder.encode(generateDict(for: object))
@@ -39,12 +38,15 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
     }
   }
 
+  /// Returns the object saved in the store
+  /// - Returns: object saved in the store. `nil` if no object is saved in store.
   public func object() -> Object? {
     guard let data = store.data(forKey: key) else { return nil }
     guard let dict = try? decoder.decode([String: Object].self, from: data) else { return nil }
     return extractObject(from: dict)
   }
 
+  /// Removes any saved object in the store.
   public func remove() {
     sync {
       store.removePersistentDomain(forName: uniqueIdentifier)
@@ -56,6 +58,12 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 // MARK: - Helpers
 
 private extension SingleUserDefaultsStore {
+  func sync(action: () throws -> Void) rethrows {
+    lock.lock()
+    try action()
+    lock.unlock()
+  }
+
   func generateDict(for object: Object) -> [String: Object] {
     return ["object": object]
   }

@@ -1,4 +1,5 @@
 @testable import FileSystemStore
+@testable import TestUtils
 
 import Foundation
 import XCTest

@@ -63,7 +63,8 @@ let package = Package(
     .testTarget(
       name: "FileSystemStoreTests",
       dependencies: [
-        "FileSystemStore"
+        "FileSystemStore",
+        "TestUtils"
       ],
       path: "Tests/FileSystem"
     ),
@@ -79,13 +80,16 @@ let package = Package(
       name: "SQLiteStoreTests",
       dependencies: [
         "SQLiteStore",
+        "TestUtils",
         .product(name: "SQLite", package: "SQLite.swift")
       ],
       path: "Tests/SQLite"
     ),
     .target(
       name: "TestUtils",
-      dependencies: [],
+      dependencies: [
+        "Blueprints"
+      ],
       path: "Tests/Utils"
     ),
   ]

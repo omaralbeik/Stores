@@ -1,7 +1,7 @@
 @testable import UserDefaultsStore
+@testable import TestUtils
 
 import Foundation
-import TestUtils
 import XCTest
 
 final class SingleUserDefaultsStoreTests: XCTestCase {

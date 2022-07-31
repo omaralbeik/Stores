@@ -1,4 +1,5 @@
 @testable import SQLiteStore
+@testable import TestUtils
 
 import Foundation
 import SQLite
