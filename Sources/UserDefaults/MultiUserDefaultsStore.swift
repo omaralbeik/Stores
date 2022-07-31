@@ -1,6 +1,7 @@
 import Blueprints
 import Foundation
 
+/// A multi object UserDefaults store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to UserDefaults.
 public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: MultiObjectStore {
   private let store: UserDefaults
   private let encoder = JSONEncoder()
@@ -110,7 +111,6 @@ private extension MultiUserDefaultsStore {
   
   func decreaseCounter() {
     let currentCount = store.integer(forKey: counterKey)
-    guard currentCount > 0 else { return }
     guard currentCount - 1 >= 0 else { return }
     store.set(currentCount - 1, forKey: counterKey)
   }

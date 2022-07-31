@@ -1,13 +1,21 @@
+/// A multi object store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects.
 public protocol MultiObjectStore {
   // Storable object.
   associatedtype Object: Codable & Identifiable
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
+  /// - Throws error: any encoding errors.
   func save(_ object: Object) throws
+
+  /// Saves an optional object to store —if not nil—.
+  /// - Parameter object: optional object to be saved.
+  /// - Throws error: any encoding errors.
+  func save(_ object: Object?) throws
 
   /// Saves an array of objects to store.
   /// - Parameter objects: array of objects to be saved.
+  /// - Throws error: any encoding errors.
   func save(_ objects: [Object]) throws
 
   /// The number of all objects stored in store.
@@ -43,6 +51,11 @@ public protocol MultiObjectStore {
 }
 
 public extension MultiObjectStore {
+  func save(_ object: Object?) throws {
+    guard let object = object else { return }
+    try save(object)
+  }
+
   func save(_ objects: [Object]) throws {
     try objects.forEach(save)
   }
@@ -53,17 +66,5 @@ public extension MultiObjectStore {
 
   func remove(withIds ids: [Object.ID]) {
     ids.forEach(remove(withId:))
-  }
-}
-
-public extension MultiObjectStore {
-  subscript(id: Object.ID) -> Object? {
-    get {
-      return object(withId: id)
-    }
-    set {
-      guard let object = newValue else { return }
-      try? save(object)
-    }
   }
 }

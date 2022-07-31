@@ -1,6 +1,7 @@
 import Blueprints
 import Foundation
 
+/// A multi object file system store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to the file system.
 public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiObjectStore {
   public init() {}
 

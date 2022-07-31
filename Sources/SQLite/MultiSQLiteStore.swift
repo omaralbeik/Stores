@@ -3,6 +3,7 @@ import Foundation
 
 @_implementationOnly import SQLite
 
+/// A multi object SQLite store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to a SQLite data base.
 public final class MultiSQLiteStore<Object: Codable & Identifiable>: MultiObjectStore {
   public init() {}
 

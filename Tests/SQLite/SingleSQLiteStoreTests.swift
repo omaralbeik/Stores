@@ -1,4 +1,4 @@
-@testable import UserDefaultsStore
+@testable import SQLiteStore
 
 import Foundation
 import SQLite

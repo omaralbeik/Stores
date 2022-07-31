@@ -45,12 +45,27 @@ let package = Package(
       ],
       path: "Sources/UserDefaults"
     ),
+    .testTarget(
+      name: "UserDefaultsStoreTests",
+      dependencies: [
+        "UserDefaultsStore",
+        "TestUtils"
+      ],
+      path: "Tests/UserDefaults"
+    ),
     .target(
       name: "FileSystemStore",
       dependencies: [
         "Blueprints"
       ],
       path: "Sources/FileSystem"
+    ),
+    .testTarget(
+      name: "FileSystemStoreTests",
+      dependencies: [
+        "FileSystemStore"
+      ],
+      path: "Tests/FileSystem"
     ),
     .target(
       name: "SQLiteStore",
@@ -59,6 +74,19 @@ let package = Package(
         .product(name: "SQLite", package: "SQLite.swift")
       ],
       path: "Sources/SQLite"
-    )
+    ),
+    .testTarget(
+      name: "SQLiteStoreTests",
+      dependencies: [
+        "SQLiteStore",
+        .product(name: "SQLite", package: "SQLite.swift")
+      ],
+      path: "Tests/SQLite"
+    ),
+    .target(
+      name: "TestUtils",
+      dependencies: [],
+      path: "Tests/Utils"
+    ),
   ]
 )
