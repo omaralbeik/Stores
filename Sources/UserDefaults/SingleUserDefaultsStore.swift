@@ -7,6 +7,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   private let encoder = JSONEncoder()
   private let decoder = JSONDecoder()
   private let lock = NSRecursiveLock()
+  private let key = "object"
 
   /// Store's unique identifier.
   ///
@@ -33,7 +34,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   /// - Throws error: any encoding errors.
   public func save(_ object: Object) throws {
     try sync {
-      let data = try encoder.encode(generateDict(for: object))
+      let data = try encoder.encode(object)
       store.set(data, forKey: key)
     }
   }
@@ -42,8 +43,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   /// - Returns: object saved in the store. `nil` if no object is saved in store.
   public func object() -> Object? {
     guard let data = store.data(forKey: key) else { return nil }
-    guard let dict = try? decoder.decode([String: Object].self, from: data) else { return nil }
-    return extractObject(from: dict)
+    return try? decoder.decode(Object.self, from: data)
   }
 
   /// Removes any saved object in the store.
@@ -62,17 +62,5 @@ private extension SingleUserDefaultsStore {
     lock.lock()
     try action()
     lock.unlock()
-  }
-
-  func generateDict(for object: Object) -> [String: Object] {
-    return ["object": object]
-  }
-
-  func extractObject(from dict: [String: Object]) -> Object? {
-    return dict["object"]
-  }
-
-  var key: String {
-    return "\(uniqueIdentifier)-single-object"
   }
 }

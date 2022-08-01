@@ -5,7 +5,75 @@ import Foundation
 import XCTest
 
 final class SingleFileSystemStoreTests: XCTestCase {
-  func testSample() throws {
-    XCTAssert(true)
+  private let manager = FileManager.default
+
+  func testCreateStore() {
+    let identifier = UUID().uuidString
+    let directory = FileManager.SearchPathDirectory.documentDirectory
+    let store = createFreshUserStore(identifier: identifier, directory: directory)
+    XCTAssertEqual(store.uniqueIdentifier, identifier)
+    XCTAssertEqual(store.directory, directory)
+  }
+
+  func testSaveObject() throws {
+    let identifier = UUID().uuidString
+    let store = createFreshUserStore(identifier: identifier)
+
+    XCTAssertNoThrow(try store.save(User.john))
+    XCTAssertNotNil(store.object)
+    XCTAssertEqual(store.object(), User.john)
+
+    let url = try url(identifier: identifier)
+    let data = try Data(contentsOf: url)
+    let decodedUser = try JSONDecoder().decode(User.self, from: data)
+    XCTAssertEqual(store.object(), decodedUser)
+  }
+
+  func testSaveInvalidObject() {
+    let store = createFreshUserStore()
+    XCTAssertThrowsError(try store.save(User.invalid))
+  }
+
+  func testObject() {
+    let store = createFreshUserStore()
+
+    XCTAssertNoThrow(try store.save(User.johnson))
+    XCTAssertNotNil(store.object())
+  }
+
+  func testRemove() throws {
+    let identifier = UUID().uuidString
+    let store = createFreshUserStore(identifier: identifier)
+
+    try store.save(User.john)
+    XCTAssertNotNil(store.object)
+    XCTAssertEqual(store.object(), User.john)
+
+    store.remove()
+
+    let url = try url(identifier: identifier)
+    XCTAssertFalse(manager.fileExists(atPath: url.path))
+  }
+}
+
+// MARK: - Helpers
+
+private extension SingleFileSystemStoreTests {
+  func url(identifier: String = "user", directory: FileManager.SearchPathDirectory = .cachesDirectory) throws -> URL {
+    return try manager.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
+      .appendingPathComponent("Stores", isDirectory: true)
+      .appendingPathComponent("SingleObjects", isDirectory: true)
+      .appendingPathComponent(identifier, isDirectory: true)
+      .appendingPathComponent("object")
+      .appendingPathExtension("json")
+  }
+
+  func createFreshUserStore(
+    identifier: String = "user",
+    directory: FileManager.SearchPathDirectory = .cachesDirectory
+  ) -> SingleFileSystemStore<User> {
+    let store = SingleFileSystemStore<User>(uniqueIdentifier: identifier, directory: directory)
+    store.remove()
+    return store
   }
 }

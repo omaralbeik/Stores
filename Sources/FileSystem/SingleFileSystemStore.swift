@@ -37,7 +37,6 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   public func save(_ object: Object) throws {
     let data = try encoder.encode(object)
     let url = try storeURL()
-    print(url)
     try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
     manager.createFile(atPath: try fileURL().path, contents: data, attributes: nil)
   }
