@@ -13,9 +13,13 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
 
   func testSaveObject() throws {
     let store = createFreshUserStore()
-    XCTAssertNoThrow(try store.save(.john))
+    try store.save(.john)
     XCTAssertEqual(store.object(), .john)
     XCTAssertEqual(userInStore(), .john)
+
+    XCTAssertNoThrow(try store.save(nil))
+    XCTAssertNil(store.object())
+    XCTAssertNil(userInStore())
   }
 
   func testSaveInvalidObject() {

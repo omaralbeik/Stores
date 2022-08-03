@@ -52,8 +52,9 @@ public protocol MultiObjectStore {
 
 public extension MultiObjectStore {
   func save(_ object: Object?) throws {
-    guard let object = object else { return }
-    try save(object)
+    if let object = object {
+      try save(object)
+    }
   }
 
   func save(_ objects: [Object]) throws {

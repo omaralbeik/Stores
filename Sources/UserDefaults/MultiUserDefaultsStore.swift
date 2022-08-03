@@ -10,12 +10,12 @@ public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: Multi
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for more than two -or more- different stores.
+  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for two -or more- different stores.
+  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
   required public init(uniqueIdentifier: String) {

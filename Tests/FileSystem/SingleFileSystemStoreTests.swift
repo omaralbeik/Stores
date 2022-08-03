@@ -19,7 +19,7 @@ final class SingleFileSystemStoreTests: XCTestCase {
     let identifier = UUID().uuidString
     let store = createFreshUserStore(identifier: identifier)
 
-    XCTAssertNoThrow(try store.save(User.john))
+    try store.save(User.john)
     XCTAssertNotNil(store.object)
     XCTAssertEqual(store.object(), User.john)
 
@@ -27,6 +27,10 @@ final class SingleFileSystemStoreTests: XCTestCase {
     let data = try Data(contentsOf: url)
     let decodedUser = try JSONDecoder().decode(User.self, from: data)
     XCTAssertEqual(store.object(), decodedUser)
+
+    try store.save(nil)
+    XCTAssertNil(store.object())
+    XCTAssertFalse(manager.fileExists(atPath: url.path))
   }
 
   func testSaveInvalidObject() {
@@ -39,6 +43,19 @@ final class SingleFileSystemStoreTests: XCTestCase {
 
     XCTAssertNoThrow(try store.save(User.johnson))
     XCTAssertNotNil(store.object())
+  }
+
+  func testObjectIsLoggingErrors() throws {
+    let store = createFreshUserStore()
+
+    let path = try url().path
+    let invalidData = "test".data(using: .utf8)!
+    manager.createFile(atPath: path, contents: invalidData)
+    XCTAssertNil(store.object())
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      "An error occurred in `SingleFileSystemStore.object()`. Error: The data couldn’t be read because it isn’t in the correct format."
+    )
   }
 
   func testRemove() throws {
@@ -62,7 +79,7 @@ private extension SingleFileSystemStoreTests {
   func url(identifier: String = "user", directory: FileManager.SearchPathDirectory = .cachesDirectory) throws -> URL {
     return try manager.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
-      .appendingPathComponent("SingleObjects", isDirectory: true)
+      .appendingPathComponent("SingleObject", isDirectory: true)
       .appendingPathComponent(identifier, isDirectory: true)
       .appendingPathComponent("object")
       .appendingPathExtension("json")

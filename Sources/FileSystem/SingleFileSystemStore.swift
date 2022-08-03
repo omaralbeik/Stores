@@ -6,10 +6,13 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   private let encoder = JSONEncoder()
   private let decoder = JSONDecoder()
   private let manager = FileManager.default
+  private let lock = NSRecursiveLock()
+
+  let logger = Logger()
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for two -or more- different stores.
+  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Directory where the store folder is created.
@@ -17,7 +20,7 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for two -or more- different stores.
+  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
   /// - Parameter directory: directory where the store folder is created. Defaults to `.applicationSupportDirectory`
@@ -35,28 +38,38 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   /// - Parameter object: object to be saved.
   /// - Throws error: any encoding errors.
   public func save(_ object: Object) throws {
-    let data = try encoder.encode(object)
-    let url = try storeURL()
-    try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
-    manager.createFile(atPath: try fileURL().path, contents: data, attributes: nil)
+    try sync {
+      let data = try encoder.encode(object)
+      let url = try storeURL()
+      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+      manager.createFile(atPath: try fileURL().path, contents: data)
+    }
   }
 
   /// Returns the object saved in the store
   /// - Returns: object saved in the store. `nil` if no object is saved in store.
   public func object() -> Object? {
-    guard let path = try? fileURL().path else { return nil }
-    guard let data = manager.contents(atPath: path) else { return nil }
-    return try? decoder.decode(Object.self, from: data)
+    do {
+      let path = try fileURL().path
+      guard let data = manager.contents(atPath: path) else { return nil }
+      return try decoder.decode(Object.self, from: data)
+    } catch {
+      logger.log(error)
+      return nil
+    }
   }
 
   /// Removes any saved object in the store.
   public func remove() {
-    do {
-      let url = try storeURL()
-      guard manager.fileExists(atPath: url.path) else { return }
-      try manager.removeItem(at: url)
-    } catch {
-      fatalError("Unable to remove object at store: \(uniqueIdentifier): \(error.localizedDescription)")
+    sync {
+      do {
+        let path = try fileURL().path
+        if manager.fileExists(atPath: path) {
+          try manager.removeItem(atPath: path)
+        }
+      } catch {
+        logger.log(error)
+      }
     }
   }
 }
@@ -64,11 +77,17 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 // MARK: - Helpers
 
 private extension SingleFileSystemStore {
+  func sync(action: () throws -> Void) rethrows {
+    lock.lock()
+    try action()
+    lock.unlock()
+  }
+
   func storeURL() throws -> URL {
     return try manager
       .url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
-      .appendingPathComponent("SingleObjects", isDirectory: true)
+      .appendingPathComponent("SingleObject", isDirectory: true)
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
   }
 
