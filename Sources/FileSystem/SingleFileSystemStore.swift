@@ -40,8 +40,7 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   public func save(_ object: Object) throws {
     try sync {
       let data = try encoder.encode(object)
-      let url = try storeURL()
-      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+      _ = try storeURL()
       manager.createFile(atPath: try fileURL().path, contents: data)
     }
   }
@@ -63,10 +62,8 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   public func remove() {
     sync {
       do {
-        let path = try fileURL().path
-        if manager.fileExists(atPath: path) {
-          try manager.removeItem(atPath: path)
-        }
+        let path = try storeURL().path
+        try manager.removeItem(atPath: path)
       } catch {
         logger.log(error)
       }
@@ -84,11 +81,15 @@ private extension SingleFileSystemStore {
   }
 
   func storeURL() throws -> URL {
-    return try manager
+    let url = try manager
       .url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("SingleObject", isDirectory: true)
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
+    if manager.fileExists(atPath: url.path) == false {
+      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+    }
+    return url
   }
 
   func fileURL() throws -> URL {

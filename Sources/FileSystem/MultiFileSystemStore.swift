@@ -39,8 +39,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// - Throws error: any encoding errors.
   public func save(_ object: Object) throws {
     try sync {
-      let storePath = try storeURL().path
-      try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
+      _ = try storeURL().path
       let newURL = try url(forObject: object)
       let data = try encoder.encode(object)
       manager.createFile(atPath: newURL.path, contents: data)
@@ -137,7 +136,6 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
         let storePath = try storeURL().path
         if manager.fileExists(atPath: storePath) {
           try manager.removeItem(atPath: storePath)
-          try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
         }
       } catch {
         logger.log(error)
@@ -161,11 +159,15 @@ private extension MultiFileSystemStore {
   }
 
   func storeURL() throws -> URL {
-    return try manager
+    let url = try manager
       .url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("MultiObjects", isDirectory: true)
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
+    if manager.fileExists(atPath: url.path) == false {
+      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+    }
+    return url
   }
 
   func url(forObjectWithId id: Object.ID) throws -> URL {

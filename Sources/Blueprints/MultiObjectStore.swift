@@ -69,3 +69,12 @@ public extension MultiObjectStore {
     ids.forEach(remove(withId:))
   }
 }
+
+public extension MultiObjectStore where Object: Hashable {
+  /// Saves a set of objects to store.
+  /// - Parameter objects: array of objects to be saved.
+  /// - Throws error: any encoding errors.
+  func save(_ objects: Set<Object>) throws {
+    try save(Array(objects))
+  }
+}

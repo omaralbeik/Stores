@@ -48,6 +48,11 @@ final class SingleFileSystemStoreTests: XCTestCase {
   func testObjectIsLoggingErrors() throws {
     let store = createFreshUserStore()
 
+    let storePath = try storeURL().path
+    if manager.fileExists(atPath: storePath) == false {
+      try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
+    }
+
     let path = try url().path
     let invalidData = "test".data(using: .utf8)!
     manager.createFile(atPath: path, contents: invalidData)
@@ -76,11 +81,21 @@ final class SingleFileSystemStoreTests: XCTestCase {
 // MARK: - Helpers
 
 private extension SingleFileSystemStoreTests {
-  func url(identifier: String = "user", directory: FileManager.SearchPathDirectory = .cachesDirectory) throws -> URL {
+  func storeURL(
+    identifier: String = "user",
+    directory: FileManager.SearchPathDirectory = .cachesDirectory
+  ) throws -> URL {
     return try manager.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("SingleObject", isDirectory: true)
       .appendingPathComponent(identifier, isDirectory: true)
+  }
+
+  func url(
+    identifier: String = "user",
+    directory: FileManager.SearchPathDirectory = .cachesDirectory
+  ) throws -> URL {
+    return try storeURL(identifier: identifier, directory: directory)
       .appendingPathComponent("object")
       .appendingPathExtension("json")
   }

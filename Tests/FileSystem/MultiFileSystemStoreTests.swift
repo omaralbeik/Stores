@@ -205,7 +205,10 @@ final class MultiFileSystemStoreTests: XCTestCase {
 // MARK: - Helpers
 
 private extension MultiFileSystemStoreTests {
-  func storeURL(identifier: String = "users", directory: FileManager.SearchPathDirectory = .cachesDirectory) throws -> URL {
+  func storeURL(
+    identifier: String = "users",
+    directory: FileManager.SearchPathDirectory = .cachesDirectory
+  ) throws -> URL {
     return try manager.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("MultiObjects", isDirectory: true)
@@ -234,6 +237,9 @@ private extension MultiFileSystemStoreTests {
 
   func allUsers() throws -> Set<User> {
     let storePath = try storeURL().path
+    if manager.fileExists(atPath: storePath) == false {
+      try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
+    }
     let users = try manager.contentsOfDirectory(atPath: storePath)
       .compactMap(url(forUserPath:))
       .map(\.path)
