@@ -39,7 +39,7 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
 
     XCTAssertThrowsError(try store.save(.invalid))
     XCTAssertThrowsError(try store.save(optionalUser))
-    XCTAssert(allUsersInStore().isEmpty)
+    XCTAssert(store.allObjects().isEmpty)
     XCTAssert(allUsersInStore().isEmpty)
   }
 

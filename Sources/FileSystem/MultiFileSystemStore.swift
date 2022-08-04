@@ -39,10 +39,23 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// - Throws error: any encoding errors.
   public func save(_ object: Object) throws {
     try sync {
-      let newURL = try url(for: object)
+      let storePath = try storeURL().path
+      try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
+      let newURL = try url(forObject: object)
       let data = try encoder.encode(object)
-      try manager.createDirectory(at: newURL, withIntermediateDirectories: true)
       manager.createFile(atPath: newURL.path, contents: data)
+    }
+  }
+
+  /// Saves an array of objects to store.
+  /// - Parameter objects: array of objects to be saved.
+  /// - Throws error: any encoding errors.
+  public func save(_ objects: [Object]) throws {
+    try sync {
+      let pairs = try objects.map({ (url: try url(forObject: $0), data: try encoder.encode($0)) })
+      pairs.forEach { pair in
+        manager.createFile(atPath: pair.url.path, contents: pair.data)
+      }
     }
   }
 
@@ -65,7 +78,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// Wether the store contains a saved object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     do {
-      let path = try url(for: id).path
+      let path = try url(forObjectWithId: id).path
       return manager.fileExists(atPath: path)
     } catch {
       logger.log(error)
@@ -78,7 +91,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// - Returns: object with the given id, or`nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
     do {
-      let path = try url(for: id).path
+      let path = try url(forObjectWithId: id).path
       guard let data = manager.contents(atPath: path) else { return nil }
       return try decoder.decode(Object.self, from: data)
     } catch {
@@ -92,7 +105,10 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   public func allObjects() -> [Object] {
     do {
       let storePath = try storeURL().path
-      return try manager.contentsOfDirectory(atPath: storePath).compactMap(object(atPath:))
+      return try manager.contentsOfDirectory(atPath: storePath)
+        .compactMap(url(forObjectPath:))
+        .map(\.path)
+        .compactMap(object(atPath:))
     } catch {
       logger.log(error)
       return []
@@ -104,7 +120,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   public func remove(withId id: Object.ID) {
     sync {
       do {
-        let path = try url(for: id).path
+        let path = try url(forObjectWithId: id).path
         if manager.fileExists(atPath: path) {
           try manager.removeItem(atPath: path)
         }
@@ -121,6 +137,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
         let storePath = try storeURL().path
         if manager.fileExists(atPath: storePath) {
           try manager.removeItem(atPath: storePath)
+          try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
         }
       } catch {
         logger.log(error)
@@ -151,13 +168,18 @@ private extension MultiFileSystemStore {
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
   }
 
-  func url(for id: Object.ID) throws -> URL {
+  func url(forObjectWithId id: Object.ID) throws -> URL {
     return try storeURL()
       .appendingPathComponent("\(id)")
       .appendingPathExtension("json")
   }
 
-  func url(for object: Object) throws -> URL {
-    return try url(for: object.id)
+  func url(forObject object: Object) throws -> URL {
+    return try url(forObjectWithId: object.id)
+  }
+
+  func url(forObjectPath objectPath: String) throws -> URL {
+    return try storeURL()
+      .appendingPathComponent(objectPath, isDirectory: false)
   }
 }
