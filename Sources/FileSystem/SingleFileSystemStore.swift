@@ -59,14 +59,11 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   }
 
   /// Removes any saved object in the store.
-  public func remove() {
-    sync {
-      do {
-        let path = try storeURL().path
-        try manager.removeItem(atPath: path)
-      } catch {
-        logger.log(error)
-      }
+  /// - Throws error: any errors that might occur if the object was not removed.
+  public func remove() throws {
+    try sync {
+      let path = try storeURL().path
+      try manager.removeItem(atPath: path)
     }
   }
 }

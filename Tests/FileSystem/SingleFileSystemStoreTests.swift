@@ -38,10 +38,10 @@ final class SingleFileSystemStoreTests: XCTestCase {
     XCTAssertThrowsError(try store.save(User.invalid))
   }
 
-  func testObject() {
+  func testObject() throws {
     let store = createFreshUserStore()
 
-    XCTAssertNoThrow(try store.save(User.johnson))
+    try store.save(User.johnson)
     XCTAssertNotNil(store.object())
   }
 
@@ -71,7 +71,7 @@ final class SingleFileSystemStoreTests: XCTestCase {
     XCTAssertNotNil(store.object)
     XCTAssertEqual(store.object(), User.john)
 
-    store.remove()
+    try store.remove()
 
     let url = try url(identifier: identifier)
     XCTAssertFalse(manager.fileExists(atPath: url.path))
@@ -105,7 +105,7 @@ private extension SingleFileSystemStoreTests {
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) -> SingleFileSystemStore<User> {
     let store = SingleFileSystemStore<User>(uniqueIdentifier: identifier, directory: directory)
-    store.remove()
+    XCTAssertNoThrow(try store.remove())
     return store
   }
 }

@@ -18,18 +18,19 @@ public protocol SingleObjectStore {
   func object() -> Object?
 
   /// Removes any saved object in the store.
-  func remove()
+  /// - Throws error: any errors that might occur if the object was not removed.
+  func remove() throws
 }
 
 public extension SingleObjectStore {
   /// Saves an optional object to store or remove currently saved object if `nil`.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: save or remove errors.
   func save(_ object: Object?) throws {
     if let object = object {
       try save(object)
     } else {
-      remove()
+      try remove()
     }
   }
 }

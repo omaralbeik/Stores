@@ -40,14 +40,17 @@ public protocol MultiObjectStore {
 
   /// Removes object with the given id —if found—.
   /// - Parameter id: id for the object to be deleted.
-  func remove(withId id: Object.ID)
+  /// - Throws error: any errors that might occur if the object was not removed.
+  func remove(withId id: Object.ID) throws
 
   /// Removes objects with given ids —if found—.
   /// - Parameter id: id for the object to be deleted.
-  func remove(withIds ids: [Object.ID])
+  /// - Throws error: any errors that might occur if objects were not removed.
+  func remove(withIds ids: [Object.ID]) throws
 
   /// Removes all objects in store.
-  func removeAll()
+  /// - Throws error: any errors that might occur if objects were not removed.
+  func removeAll() throws
 }
 
 public extension MultiObjectStore {
@@ -65,8 +68,8 @@ public extension MultiObjectStore {
     return ids.compactMap(object(withId:))
   }
 
-  func remove(withIds ids: [Object.ID]) {
-    ids.forEach(remove(withId:))
+  func remove(withIds ids: [Object.ID]) throws {
+    try ids.forEach(remove(withId:))
   }
 }
 

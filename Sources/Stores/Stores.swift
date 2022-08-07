@@ -6,6 +6,6 @@
 @_exported import FileSystemStore
 #endif
 
-#if canImport(SQLiteStore)
-@_exported import SQLiteStore
+#if canImport(CoreDataStore)
+@_exported import CoreDataStore
 #endif

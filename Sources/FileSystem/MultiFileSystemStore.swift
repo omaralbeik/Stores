@@ -51,7 +51,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// - Throws error: any encoding errors.
   public func save(_ objects: [Object]) throws {
     try sync {
-      let pairs = try objects.map({ (url: try url(forObject: $0), data: try encoder.encode($0)) })
+      let pairs = try objects.map { (url: try url(forObject: $0), data: try encoder.encode($0)) }
       pairs.forEach { pair in
         manager.createFile(atPath: pair.url.path, contents: pair.data)
       }
@@ -116,29 +116,21 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
 
   /// Removes object with the given id —if found—.
   /// - Parameter id: id for the object to be deleted.
-  public func remove(withId id: Object.ID) {
-    sync {
-      do {
-        let path = try url(forObjectWithId: id).path
-        if manager.fileExists(atPath: path) {
-          try manager.removeItem(atPath: path)
-        }
-      } catch {
-        logger.log(error)
+  public func remove(withId id: Object.ID) throws {
+    try sync {
+      let path = try url(forObjectWithId: id).path
+      if manager.fileExists(atPath: path) {
+        try manager.removeItem(atPath: path)
       }
     }
   }
 
   /// Removes all objects in store.
-  public func removeAll() {
-    sync {
-      do {
-        let storePath = try storeURL().path
-        if manager.fileExists(atPath: storePath) {
-          try manager.removeItem(atPath: storePath)
-        }
-      } catch {
-        logger.log(error)
+  public func removeAll() throws {
+    try sync {
+      let storePath = try storeURL().path
+      if manager.fileExists(atPath: storePath) {
+        try manager.removeItem(atPath: storePath)
       }
     }
   }

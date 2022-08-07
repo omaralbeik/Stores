@@ -17,7 +17,12 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
     XCTAssertEqual(store.object(), .john)
     XCTAssertEqual(userInStore(), .john)
 
-    XCTAssertNoThrow(try store.save(nil))
+    let user: User? = .james
+    try store.save(user)
+    XCTAssertEqual(store.object(), .james)
+    XCTAssertEqual(userInStore(), .james)
+
+    try store.save(nil)
     XCTAssertNil(store.object())
     XCTAssertNil(userInStore())
   }

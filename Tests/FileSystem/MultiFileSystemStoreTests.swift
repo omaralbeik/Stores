@@ -58,6 +58,13 @@ final class MultiFileSystemStoreTests: XCTestCase {
     XCTAssertEqual(store.objectsCount, 3)
     XCTAssertEqual(Set(store.allObjects()), users)
     XCTAssertEqual(try allUsers(), users)
+
+    try store.removeAll()
+
+    try store.save(users)
+    XCTAssertEqual(store.objectsCount, 3)
+    XCTAssertEqual(Set(store.allObjects()), users)
+    XCTAssertEqual(try allUsers(), users)
   }
 
   func testSaveInvalidObjects() {
@@ -69,10 +76,10 @@ final class MultiFileSystemStoreTests: XCTestCase {
     XCTAssert(try allUsers().isEmpty)
   }
 
-  func testObject() {
+  func testObject() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.johnson)
     XCTAssertEqual(store.object(withId: User.johnson.id), .johnson)
     XCTAssertEqual(try allUsers(), [.johnson])
 
@@ -80,78 +87,78 @@ final class MultiFileSystemStoreTests: XCTestCase {
     XCTAssertEqual(try allUsers(), [.johnson])
   }
 
-  func testObjects() {
+  func testObjects() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save([.john, .james]))
+    try store.save([.john, .james])
     XCTAssertEqual(store.objects(withIds: [User.john.id, User.james.id, 5]), [.john, .james])
     XCTAssertEqual(try allUsers(), [.john, .james])
   }
 
-  func testAllObjects() {
+  func testAllObjects() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.john))
+    try store.save(.john)
     XCTAssertEqual(Set(store.allObjects()), [.john])
     XCTAssertEqual(try allUsers(), [.john])
 
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.johnson)
     XCTAssertEqual(Set(store.allObjects()), [.john, .johnson])
     XCTAssertEqual(try allUsers(), [.john, .johnson])
 
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.james)
     XCTAssertEqual(Set(store.allObjects()), [.john, .johnson, .james])
     XCTAssertEqual(try allUsers(), [.john, .johnson, .james])
   }
 
-  func testRemoveObject() {
+  func testRemoveObject() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.james)
     XCTAssertEqual(store.objectsCount, 1)
     XCTAssertEqual(store.allObjects(), [.james])
     XCTAssertEqual(try allUsers(), [.james])
 
-    store.remove(withId: 123)
+    try store.remove(withId: 123)
     XCTAssertEqual(store.objectsCount, 1)
     XCTAssertEqual(store.allObjects(), [.james])
     XCTAssertEqual(try allUsers(), [.james])
 
-    store.remove(withId: User.james.id)
+    try store.remove(withId: User.james.id)
     XCTAssertEqual(store.objectsCount, 0)
     XCTAssert(store.allObjects().isEmpty)
     XCTAssert(try allUsers().isEmpty)
   }
 
-  func testRemoveObjects() {
+  func testRemoveObjects() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save(.james))
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.james)
+    try store.save(.johnson)
     XCTAssertEqual(store.objectsCount, 2)
     XCTAssertEqual(Set(store.allObjects()), [.james, .johnson])
 
-    store.remove(withIds: [User.james.id, 5, 6, 8])
+    try store.remove(withIds: [User.james.id, 5, 6, 8])
     XCTAssertEqual(store.objectsCount, 1)
     XCTAssertEqual(store.allObjects(), [.johnson])
     XCTAssertEqual(try allUsers(), [.johnson])
   }
 
-  func testRemoveAll() {
+  func testRemoveAll() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save(.john))
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.john)
+    try store.save(.johnson)
+    try store.save(.james)
 
-    store.removeAll()
+    try store.removeAll()
     XCTAssertEqual(store.objectsCount, 0)
     XCTAssert(store.allObjects().isEmpty)
     XCTAssert(try allUsers().isEmpty)
   }
 
-  func testContainsObject() {
+  func testContainsObject() throws {
     let store = createFreshUsersStore()
     XCTAssertFalse(store.containsObject(withId: 10))
 
-    XCTAssertNoThrow(try store.save(.john))
+    try store.save(.john)
     XCTAssert(store.containsObject(withId: User.john.id))
   }
 
@@ -189,7 +196,7 @@ final class MultiFileSystemStoreTests: XCTestCase {
     let expectation2 = XCTestExpectation(description: "Store has 500 items.")
     for i in 0..<500 {
       Thread.detachNewThread {
-        store.remove(withId: i)
+        try? store.remove(withId: i)
       }
     }
     Thread.sleep(forTimeInterval: 2)
@@ -252,7 +259,7 @@ private extension MultiFileSystemStoreTests {
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) -> MultiFileSystemStore<User> {
     let store = MultiFileSystemStore<User>(uniqueIdentifier: identifier, directory: directory)
-    store.removeAll()
+    XCTAssertNoThrow(try store.removeAll())
     return store
   }
 }

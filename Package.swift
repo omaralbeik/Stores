@@ -15,14 +15,9 @@ let package = Package(
     .library(name: "Blueprints", targets: ["Blueprints"]),
     .library(name: "UserDefaultsStore", targets: ["UserDefaultsStore"]),
     .library(name: "FileSystemStore", targets: ["FileSystemStore"]),
-    .library(name: "SQLiteStore", targets: ["SQLiteStore"]),
+    .library(name: "CoreDataStore", targets: ["CoreDataStore"]),
   ],
-  dependencies: [
-    .package(
-      url: "https://github.com/stephencelis/SQLite.swift.git",
-      from: "0.13.3"
-    )
-  ],
+  dependencies: [],
   targets: [
     .target(
       name: "Stores",
@@ -30,7 +25,7 @@ let package = Package(
         "Blueprints",
         "UserDefaultsStore",
         "FileSystemStore",
-        "SQLiteStore"
+        "CoreDataStore"
       ],
       path: "Sources/Stores"
     ),
@@ -69,21 +64,20 @@ let package = Package(
       path: "Tests/FileSystem"
     ),
     .target(
-      name: "SQLiteStore",
+      name: "CoreDataStore",
       dependencies: [
         "Blueprints",
-        .product(name: "SQLite", package: "SQLite.swift")
       ],
-      path: "Sources/SQLite"
+      path: "Sources/CoreData",
+      resources: [.process("Resources")]
     ),
     .testTarget(
-      name: "SQLiteStoreTests",
+      name: "CoreDataStoreTests",
       dependencies: [
-        "SQLiteStore",
+        "CoreDataStore",
         "TestUtils",
-        .product(name: "SQLite", package: "SQLite.swift")
       ],
-      path: "Tests/SQLite"
+      path: "Tests/CoreData"
     ),
     .target(
       name: "TestUtils",
