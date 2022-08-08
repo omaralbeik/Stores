@@ -3,10 +3,10 @@ import Foundation
 
 /// A multi object UserDefaults store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to UserDefaults.
 public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: MultiObjectStore {
-  private let store: UserDefaults
-  private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
-  private let lock = NSRecursiveLock()
+  let store: UserDefaults
+  let encoder = JSONEncoder()
+  let decoder = JSONDecoder()
+  let lock = NSRecursiveLock()
 
   /// Store's unique identifier.
   ///
@@ -115,7 +115,7 @@ public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: Multi
 
 // MARK: - Helpers
 
-private extension MultiUserDefaultsStore {
+extension MultiUserDefaultsStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()

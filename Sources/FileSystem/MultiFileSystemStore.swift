@@ -3,11 +3,10 @@ import Foundation
 
 /// A multi object file system store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to the file system.
 public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiObjectStore {
-  private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
-  private let manager = FileManager.default
-  private let lock = NSRecursiveLock()
-
+  let encoder = JSONEncoder()
+  let decoder = JSONDecoder()
+  let manager = FileManager.default
+  let lock = NSRecursiveLock()
   let logger = Logger()
 
   /// Store's unique identifier.
@@ -138,7 +137,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
 
 // MARK: - Helpers
 
-private extension MultiFileSystemStore {
+extension MultiFileSystemStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()

@@ -3,11 +3,11 @@ import Foundation
 
 /// A single UserDefaults object store offers a convenient way to store and retrieve a single `Codable` object to UserDefaults.
 public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
-  private let store: UserDefaults
-  private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
-  private let lock = NSRecursiveLock()
-  private let key = "object"
+  let store: UserDefaults
+  let encoder = JSONEncoder()
+  let decoder = JSONDecoder()
+  let lock = NSRecursiveLock()
+  let key = "object"
 
   /// Store's unique identifier.
   ///
@@ -57,7 +57,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 
 // MARK: - Helpers
 
-private extension SingleUserDefaultsStore {
+extension SingleUserDefaultsStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()

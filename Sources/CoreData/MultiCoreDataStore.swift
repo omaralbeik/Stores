@@ -3,17 +3,16 @@ import CoreData
 import Foundation
 
 public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObjectStore {
-  private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
-  private let lock = NSRecursiveLock()
-
-  let storage: CoreDataStorage
+  let encoder = JSONEncoder()
+  let decoder = JSONDecoder()
+  let lock = NSRecursiveLock()
+  let database: Database
 
   public let databaseName: String
 
   public init(databaseName: String) {
     self.databaseName = databaseName
-    self.storage = .init(databaseName: databaseName)
+    self.database = .init(name: databaseName)
   }
 
   // MARK: - Store
@@ -26,14 +25,14 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       let data = try encoder.encode(object)
       let key = key(for: object)
       let request = Entity.fetchRequest(id: key)
-      if let savedEntity = try storage.context.fetch(request).first {
+      if let savedEntity = try database.context.fetch(request).first {
         savedEntity.data = data
       } else {
-        let newEntity = Entity(context: storage.context)
+        let newEntity = Entity(context: database.context)
         newEntity.id = key
         newEntity.data = data
       }
-      try storage.context.save()
+      try database.context.save()
     }
   }
 
@@ -45,15 +44,15 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       let pairs = try objects.map({ (key: key(for: $0), data: try encoder.encode($0)) })
       try pairs.forEach { pair in
         let request = Entity.fetchRequest(id: pair.key)
-        if let savedEntity = try storage.context.fetch(request).first {
+        if let savedEntity = try database.context.fetch(request).first {
           savedEntity.data = pair.data
         } else {
-          let newEntity = Entity(context: storage.context)
+          let newEntity = Entity(context: database.context)
           newEntity.id = pair.key
           newEntity.data = pair.data
         }
       }
-      try storage.context.save()
+      try database.context.save()
     }
   }
 
@@ -61,7 +60,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   public var objectsCount: Int {
     let request = Entity.fetchRequest()
     do {
-      return try storage.context.count(for: request)
+      return try database.context.count(for: request)
     } catch {
       print(error.localizedDescription)
       return 0
@@ -73,7 +72,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
     let key = key(for: id)
     let request = Entity.fetchRequest(id: key)
     do {
-      let count = try storage.context.count(for: request)
+      let count = try database.context.count(for: request)
       return count != 0
     } catch {
       print(error.localizedDescription)
@@ -87,7 +86,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   public func object(withId id: Object.ID) -> Object? {
     let request = Entity.fetchRequest(id: key(for: id))
     do {
-      guard let data = try storage.context.fetch(request).first?.data else {
+      guard let data = try database.context.fetch(request).first?.data else {
         return nil
       }
       return try decoder.decode(Object.self, from: data)
@@ -102,7 +101,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   public func allObjects() -> [Object] {
     let request = Entity.fetchRequest()
     do {
-      return try storage.context.fetch(request)
+      return try database.context.fetch(request)
         .compactMap(\.data)
         .compactMap { try decoder.decode(Object.self, from: $0) }
 
@@ -117,10 +116,10 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   public func remove(withId id: Object.ID) throws {
     try sync {
       let request = Entity.fetchRequest(id: key(for: id))
-      if let object = try storage.context.fetch(request).first {
-        storage.context.delete(object)
+      if let object = try database.context.fetch(request).first {
+        database.context.delete(object)
       }
-      try storage.context.save()
+      try database.context.save()
     }
   }
 
@@ -136,17 +135,17 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   public func removeAll() throws {
     try sync {
       let request = Entity.fetchRequest()
-      let entities = try storage.context.fetch(request)
+      let entities = try database.context.fetch(request)
       for entity in entities {
-        storage.context.delete(entity)
+        database.context.delete(entity)
       }
-      try storage.context.save()  }
+      try database.context.save()  }
   }
 }
 
 // MARK: - Helpers
 
-private extension MultiCoreDataStore {
+extension MultiCoreDataStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()

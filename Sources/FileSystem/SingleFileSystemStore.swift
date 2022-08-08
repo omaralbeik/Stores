@@ -3,11 +3,10 @@ import Foundation
 
 /// A single file system object store offers a convenient way to store and retrieve a single `Codable` object to the file system.
 public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
-  private let encoder = JSONEncoder()
-  private let decoder = JSONDecoder()
-  private let manager = FileManager.default
-  private let lock = NSRecursiveLock()
-
+  let encoder = JSONEncoder()
+  let decoder = JSONDecoder()
+  let manager = FileManager.default
+  let lock = NSRecursiveLock()
   let logger = Logger()
 
   /// Store's unique identifier.
@@ -70,7 +69,7 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 
 // MARK: - Helpers
 
-private extension SingleFileSystemStore {
+extension SingleFileSystemStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()
