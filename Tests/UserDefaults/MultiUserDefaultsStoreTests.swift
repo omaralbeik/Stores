@@ -62,10 +62,10 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
     XCTAssert(allUsersInStore().isEmpty)
   }
 
-  func testObject() {
+  func testObject() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.johnson)
     XCTAssertEqual(store.object(withId: User.johnson.id), .johnson)
     XCTAssertEqual(allUsersInStore(), [.johnson])
 
@@ -73,33 +73,33 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
     XCTAssertEqual(allUsersInStore(), [.johnson])
   }
 
-  func testObjects() {
+  func testObjects() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save([.john, .james]))
+    try store.save([.john, .james])
     XCTAssertEqual(store.objects(withIds: [User.john.id, User.james.id, 5]), [.john, .james])
     XCTAssertEqual(allUsersInStore(), [.john, .james])
   }
 
-  func testAllObjects() {
+  func testAllObjects() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.john))
+    try store.save(.john)
     XCTAssertEqual(Set(store.allObjects()), [.john])
     XCTAssertEqual(allUsersInStore(), [.john])
 
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.johnson)
     XCTAssertEqual(Set(store.allObjects()), [.john, .johnson])
     XCTAssertEqual(allUsersInStore(), [.john, .johnson])
 
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.james)
     XCTAssertEqual(Set(store.allObjects()), [.john, .johnson, .james])
     XCTAssertEqual(allUsersInStore(), [.john, .johnson, .james])
   }
 
-  func testRemoveObject() {
+  func testRemoveObject() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.james)
     XCTAssertEqual(store.objectsCount, 1)
     XCTAssertEqual(store.allObjects(), [.james])
     XCTAssertEqual(allUsersInStore(), [.james])
@@ -115,10 +115,10 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
     XCTAssert(allUsersInStore().isEmpty)
   }
 
-  func testRemoveObjects() {
+  func testRemoveObjects() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save(.james))
-    XCTAssertNoThrow(try store.save(.johnson))
+    try store.save(.james)
+    try store.save(.johnson)
     XCTAssertEqual(store.objectsCount, 2)
     XCTAssertEqual(Set(store.allObjects()), [.james, .johnson])
 
@@ -128,11 +128,11 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
     XCTAssertEqual(allUsersInStore(), [.johnson])
   }
 
-  func testRemoveAll() {
+  func testRemoveAll() throws {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save(.john))
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertNoThrow(try store.save(.james))
+    try store.save(.john)
+    try store.save(.johnson)
+    try store.save(.james)
 
     store.removeAll()
     XCTAssertEqual(store.objectsCount, 0)
@@ -140,11 +140,11 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
     XCTAssert(allUsersInStore().isEmpty)
   }
 
-  func testContainsObject() {
+  func testContainsObject() throws {
     let store = createFreshUsersStore()
     XCTAssertFalse(store.containsObject(withId: 10))
 
-    XCTAssertNoThrow(try store.save(.john))
+    try store.save(.john)
     XCTAssert(store.containsObject(withId: User.john.id))
   }
 
