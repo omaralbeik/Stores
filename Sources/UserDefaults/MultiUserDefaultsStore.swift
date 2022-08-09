@@ -1,7 +1,7 @@
 import Blueprints
 import Foundation
 
-/// A multi object UserDefaults store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to UserDefaults.
+/// Multi object UserDefaults store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to UserDefaults.
 public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: MultiObjectStore {
   let store: UserDefaults
   let encoder = JSONEncoder()

@@ -1,7 +1,7 @@
 import Blueprints
 import Foundation
 
-/// A single UserDefaults object store offers a convenient way to store and retrieve a single `Codable` object to UserDefaults.
+/// Single UserDefaults object store offers a convenient way to store and retrieve a single `Codable` object to UserDefaults.
 public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   let store: UserDefaults
   let encoder = JSONEncoder()

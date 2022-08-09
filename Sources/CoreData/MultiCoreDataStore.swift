@@ -2,14 +2,23 @@ import Blueprints
 import CoreData
 import Foundation
 
+/// Multi object Core Data store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to a Core Data database.
 public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
   let lock = NSRecursiveLock()
   let database: Database
 
+  /// Store's database name.
+  ///
+  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
   public let databaseName: String
 
+  /// Initialize store with given database name.
+  ///
+  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  ///
+  /// - Parameter databaseName: store's database name.
   public init(databaseName: String) {
     self.databaseName = databaseName
     self.database = .init(name: databaseName)

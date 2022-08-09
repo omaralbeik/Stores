@@ -19,6 +19,7 @@ let package = Package(
   ],
   dependencies: [],
   targets: [
+    // MARK: - Stores
     .target(
       name: "Stores",
       dependencies: [
@@ -29,10 +30,20 @@ let package = Package(
       ],
       path: "Sources/Stores"
     ),
+    // MARK: - Blueprints
     .target(
       name: "Blueprints",
       path: "Sources/Blueprints"
     ),
+    .testTarget(
+      name: "BlueprintsTests",
+      dependencies: [
+        "Blueprints",
+        "TestUtils"
+      ],
+      path: "Tests/Blueprints"
+    ),
+    // MARK: - UserDefaultsStore
     .target(
       name: "UserDefaultsStore",
       dependencies: [
@@ -48,6 +59,7 @@ let package = Package(
       ],
       path: "Tests/UserDefaults"
     ),
+    // MARK: - FileSystem
     .target(
       name: "FileSystemStore",
       dependencies: [
@@ -63,6 +75,7 @@ let package = Package(
       ],
       path: "Tests/FileSystem"
     ),
+    // MARK: - CoreData
     .target(
       name: "CoreDataStore",
       dependencies: [
@@ -79,6 +92,7 @@ let package = Package(
       ],
       path: "Tests/CoreData"
     ),
+    // MARK: - TestUtils
     .target(
       name: "TestUtils",
       dependencies: [

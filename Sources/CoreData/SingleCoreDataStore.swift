@@ -2,6 +2,7 @@ import Blueprints
 import CoreData
 import Foundation
 
+/// Single Core Data object store offers a convenient way to store and retrieve a single `Codable` object to a Core Data database.
 public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
@@ -9,8 +10,16 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   let database: Database
   let key = "object"
 
+  /// Store's database name.
+  ///
+  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
   public let databaseName: String
 
+  /// Initialize store with given database name.
+  ///
+  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  ///
+  /// - Parameter databaseName: store's database name.
   public init(databaseName: String) {
     self.databaseName = databaseName
     self.database = .init(name: databaseName)

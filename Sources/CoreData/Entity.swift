@@ -6,10 +6,6 @@ final class Entity: NSManagedObject {
   @NSManaged var data: Data?
   @NSManaged var lastUpdated: Date?
 
-  override var description: String {
-    return "Entity"
-  }
-
   @nonobjc
   class func fetchRequest() -> NSFetchRequest<Entity> {
     let request = NSFetchRequest<Entity>(entityName: "Entity")
