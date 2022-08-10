@@ -12,7 +12,8 @@ public final class SingleObjectStoreFake<Object: Codable>: SingleObjectStore {
   /// Create a new store fake with a given dictionary and an option error to be thrown.
   /// - Parameters:
   ///   - underlyingObject: optional object. Defaults to `nil`.
-  ///   - error: optional error. Setting this will make any throwing method of the store throw the set error. Defaults to `nil`.
+  ///   - error: optional error. Setting this will make any throwing method of the store throw the set error.
+  ///   Defaults to `nil`.
   public init(
     underlyingObject: Object? = nil,
     error: Error? = nil

@@ -14,12 +14,12 @@ final class SingleCoreDataStoreTests: XCTestCase {
 
   func testSaveObject() throws {
     let store = createFreshUserStore()
-    try store.save(.john)
-    XCTAssertEqual(store.object(), .john)
+    try store.save(.ahmad)
+    XCTAssertEqual(store.object(), .ahmad)
 
-    let user: User? = .james
+    let user: User? = .kareem
     try store.save(user)
-    XCTAssertEqual(store.object(), .james)
+    XCTAssertEqual(store.object(), .kareem)
 
     try store.save(nil)
     XCTAssertNil(store.object())
@@ -33,15 +33,17 @@ final class SingleCoreDataStoreTests: XCTestCase {
 
   func testObject() throws {
     let store = createFreshUserStore()
-    try store.save(.johnson)
-    XCTAssertEqual(store.object(), .johnson)
+    try store.save(.dalia)
+    XCTAssertEqual(store.object(), .dalia)
   }
 }
 
 // MARK: - Helpers
 
 private extension SingleCoreDataStoreTests {
-  func createFreshUserStore(databaseName: String = "user") -> SingleCoreDataStore<User> {
+  func createFreshUserStore(
+    databaseName: String = "user"
+  ) -> SingleCoreDataStore<User> {
     let store = SingleCoreDataStore<User>(databaseName: databaseName)
     XCTAssertNoThrow(try store.remove())
     return store

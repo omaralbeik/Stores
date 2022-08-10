@@ -10,7 +10,10 @@ final class SingleFileSystemStoreTests: XCTestCase {
   func testCreateStore() {
     let identifier = UUID().uuidString
     let directory = FileManager.SearchPathDirectory.documentDirectory
-    let store = createFreshUserStore(identifier: identifier, directory: directory)
+    let store = createFreshUserStore(
+      identifier: identifier,
+      directory: directory
+    )
     XCTAssertEqual(store.uniqueIdentifier, identifier)
     XCTAssertEqual(store.directory, directory)
   }
@@ -19,9 +22,9 @@ final class SingleFileSystemStoreTests: XCTestCase {
     let identifier = UUID().uuidString
     let store = createFreshUserStore(identifier: identifier)
 
-    try store.save(User.john)
+    try store.save(User.ahmad)
     XCTAssertNotNil(store.object)
-    XCTAssertEqual(store.object(), User.john)
+    XCTAssertEqual(store.object(), User.ahmad)
 
     let url = try url(identifier: identifier)
     let data = try Data(contentsOf: url)
@@ -41,7 +44,7 @@ final class SingleFileSystemStoreTests: XCTestCase {
   func testObject() throws {
     let store = createFreshUserStore()
 
-    try store.save(User.johnson)
+    try store.save(User.dalia)
     XCTAssertNotNil(store.object())
   }
 
@@ -50,7 +53,10 @@ final class SingleFileSystemStoreTests: XCTestCase {
 
     let storePath = try storeURL().path
     if manager.fileExists(atPath: storePath) == false {
-      try manager.createDirectory(atPath: storePath, withIntermediateDirectories: true)
+      try manager.createDirectory(
+        atPath: storePath,
+        withIntermediateDirectories: true
+      )
     }
 
     let path = try url().path
@@ -59,7 +65,10 @@ final class SingleFileSystemStoreTests: XCTestCase {
     XCTAssertNil(store.object())
     XCTAssertEqual(
       store.logger.lastOutput,
-      "An error occurred in `SingleFileSystemStore.object()`. Error: The data couldn’t be read because it isn’t in the correct format."
+      """
+      An error occurred in `SingleFileSystemStore.object()`. Error: The data \
+      couldn’t be read because it isn’t in the correct format.
+      """
     )
   }
 
@@ -67,9 +76,9 @@ final class SingleFileSystemStoreTests: XCTestCase {
     let identifier = UUID().uuidString
     let store = createFreshUserStore(identifier: identifier)
 
-    try store.save(User.john)
+    try store.save(User.ahmad)
     XCTAssertNotNil(store.object)
-    XCTAssertEqual(store.object(), User.john)
+    XCTAssertEqual(store.object(), User.ahmad)
 
     try store.remove()
 
@@ -85,10 +94,15 @@ private extension SingleFileSystemStoreTests {
     identifier: String = "user",
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) throws -> URL {
-    return try manager.url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
-      .appendingPathComponent("Stores", isDirectory: true)
-      .appendingPathComponent("SingleObject", isDirectory: true)
-      .appendingPathComponent(identifier, isDirectory: true)
+    return try manager.url(
+      for: directory,
+      in: .userDomainMask,
+      appropriateFor: nil,
+      create: true
+    )
+    .appendingPathComponent("Stores", isDirectory: true)
+    .appendingPathComponent("SingleObject", isDirectory: true)
+    .appendingPathComponent(identifier, isDirectory: true)
   }
 
   func url(
@@ -104,7 +118,10 @@ private extension SingleFileSystemStoreTests {
     identifier: String = "user",
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) -> SingleFileSystemStore<User> {
-    let store = SingleFileSystemStore<User>(uniqueIdentifier: identifier, directory: directory)
+    let store = SingleFileSystemStore<User>(
+      uniqueIdentifier: identifier,
+      directory: directory
+    )
     XCTAssertNoThrow(try store.remove())
     return store
   }

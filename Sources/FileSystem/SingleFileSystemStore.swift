@@ -1,7 +1,10 @@
 import Blueprints
 import Foundation
 
-/// Single file system object store offers a convenient way to store and retrieve a single `Codable` object to the file system.
+/// The single file system object store offers a convenient and type-safe way to store and retrieve a single
+/// `Codable` object by saving it as a json file using the file system.
+///
+/// > Thread safety: This is a thread-safe class.
 public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
@@ -11,7 +14,8 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Directory where the store folder is created.
@@ -19,10 +23,15 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
-  /// - Parameter directory: directory where the store folder is created. Defaults to `.applicationSupportDirectory`
+  /// - Parameter directory: directory where the store folder is created.
+  /// Defaults to `.applicationSupportDirectory`
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same identifier and directory.
   required public init(
     uniqueIdentifier: String,
     directory: FileManager.SearchPathDirectory = .applicationSupportDirectory
@@ -31,7 +40,7 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
     self.directory = directory
   }
 
-  // MARK: - Store
+  // MARK: - SingleObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
@@ -45,6 +54,10 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   }
 
   /// Returns the object saved in the store
+  ///
+  /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Returns: object saved in the store. `nil` if no object is saved in store.
   public func object() -> Object? {
     do {
@@ -78,12 +91,20 @@ extension SingleFileSystemStore {
 
   func storeURL() throws -> URL {
     let url = try manager
-      .url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
+      .url(
+        for: directory,
+        in: .userDomainMask,
+        appropriateFor: nil,
+        create: true
+      )
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("SingleObject", isDirectory: true)
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
     if manager.fileExists(atPath: url.path) == false {
-      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+      try manager.createDirectory(
+        atPath: url.path,
+        withIntermediateDirectories: true
+      )
     }
     return url
   }
@@ -94,4 +115,3 @@ extension SingleFileSystemStore {
       .appendingPathExtension("json")
   }
 }
-

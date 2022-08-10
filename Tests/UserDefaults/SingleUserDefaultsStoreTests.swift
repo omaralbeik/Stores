@@ -13,14 +13,14 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
 
   func testSaveObject() throws {
     let store = createFreshUserStore()
-    try store.save(.john)
-    XCTAssertEqual(store.object(), .john)
-    XCTAssertEqual(userInStore(), .john)
+    try store.save(.ahmad)
+    XCTAssertEqual(store.object(), .ahmad)
+    XCTAssertEqual(userInStore(), .ahmad)
 
-    let user: User? = .james
+    let user: User? = .kareem
     try store.save(user)
-    XCTAssertEqual(store.object(), .james)
-    XCTAssertEqual(userInStore(), .james)
+    XCTAssertEqual(store.object(), .kareem)
+    XCTAssertEqual(userInStore(), .kareem)
 
     try store.save(nil)
     XCTAssertNil(store.object())
@@ -35,15 +35,15 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
 
   func testObject() throws {
     let store = createFreshUserStore()
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertEqual(store.object(), .johnson)
-    XCTAssertEqual(userInStore(), .johnson)
+    XCTAssertNoThrow(try store.save(.dalia))
+    XCTAssertEqual(store.object(), .dalia)
+    XCTAssertEqual(userInStore(), .dalia)
   }
 
   func testRemove() {
     let store = createFreshUserStore()
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertEqual(store.object(), .johnson)
+    XCTAssertNoThrow(try store.save(.dalia))
+    XCTAssertEqual(store.object(), .dalia)
 
     store.remove()
     XCTAssertNil(store.object())
@@ -54,14 +54,17 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
 // MARK: - Helpers
 
 private extension SingleUserDefaultsStoreTests {
-  func createFreshUserStore(identifier: String = "user") -> SingleUserDefaultsStore<User> {
+  func createFreshUserStore(
+    identifier: String = "user"
+  ) -> SingleUserDefaultsStore<User> {
     let store = SingleUserDefaultsStore<User>(uniqueIdentifier: identifier)
     store.remove()
     return store
   }
 
   func userInStore(identifier: String = "user") -> User? {
-    guard let data = UserDefaults(suiteName: identifier)?.data(forKey: "object") else { return nil }
+    guard let data = UserDefaults(suiteName: identifier)?
+      .data(forKey: "object") else { return nil }
     return try? JSONDecoder().decode(User.self, from: data)
   }
 }

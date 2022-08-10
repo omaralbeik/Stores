@@ -1,7 +1,10 @@
 import Blueprints
 import Foundation
 
-/// Single UserDefaults object store offers a convenient way to store and retrieve a single `Codable` object to UserDefaults.
+/// The single UserDefaults object store offers a convenient and type-safe way to store and retrieve a single
+/// `Codable` object to UserDefaults.
+///
+/// > Thread safety: This is a thread-safe class.
 public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   let store: UserDefaults
   let encoder = JSONEncoder()
@@ -11,23 +14,30 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same identifier.
   required public init(uniqueIdentifier: String) {
     guard let store = UserDefaults(suiteName: uniqueIdentifier) else {
-      preconditionFailure("Can not create a store with identifier: '\(uniqueIdentifier)'.")
+      preconditionFailure(
+        "Can not create store with identifier: '\(uniqueIdentifier)'."
+      )
     }
     self.uniqueIdentifier = uniqueIdentifier
     self.store = store
   }
 
-  // MARK: - Store
+  // MARK: - SingleObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.

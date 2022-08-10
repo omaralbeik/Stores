@@ -1,8 +1,13 @@
 import Blueprints
 import Foundation
 
-/// Multi object UserDefaults store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to UserDefaults.
-public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: MultiObjectStore {
+/// The multi object UserDefaults store offers a convenient and type-safe way to store and retrieve a collection
+/// of `Codable` and `Identifiable` objects to UserDefaults.
+///
+/// > Thread safety: This is a thread-safe class.
+public final class MultiUserDefaultsStore<
+  Object: Codable & Identifiable
+>: MultiObjectStore {
   let store: UserDefaults
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
@@ -10,23 +15,30 @@ public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: Multi
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same identifier.
   required public init(uniqueIdentifier: String) {
     guard let store = UserDefaults(suiteName: uniqueIdentifier) else {
-      preconditionFailure("Can not create a store with identifier: '\(uniqueIdentifier)'.")
+      preconditionFailure(
+        "Can not create store with identifier: '\(uniqueIdentifier)'."
+      )
     }
     self.uniqueIdentifier = uniqueIdentifier
     self.store = store
   }
 
-  // MARK: - Store
+  // MARK: - MultiObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
@@ -47,7 +59,10 @@ public final class MultiUserDefaultsStore<Object: Codable & Identifiable>: Multi
   /// - Throws error: any encoding errors.
   public func save(_ objects: [Object]) throws {
     try sync {
-      let pairs = try objects.map({ (key: key(for: $0), data: try encoder.encode($0)) })
+      let pairs = try objects.map { (
+        key: key(for: $0),
+        data: try encoder.encode($0))
+      }
       pairs.forEach { pair in
         if store.object(forKey: pair.key) == nil {
           increaseCounter()

@@ -9,9 +9,9 @@ final class MultiCoreDataStoreTests: XCTestCase {
   func testSaveObject() throws {
     let store = createFreshUsersStore()
 
-    try store.save(.john)
+    try store.save(.ahmad)
     XCTAssertEqual(store.objectsCount, 1)
-    XCTAssertEqual(store.allObjects(), [.john])
+    XCTAssertEqual(store.allObjects(), [.ahmad])
   }
 
   func testSaveOptional() throws {
@@ -20,9 +20,9 @@ final class MultiCoreDataStoreTests: XCTestCase {
     try store.save(nil)
     XCTAssertEqual(store.objectsCount, 0)
 
-    try store.save(.john)
+    try store.save(.ahmad)
     XCTAssertEqual(store.objectsCount, 1)
-    XCTAssertEqual(store.allObjects(), [.john])
+    XCTAssertEqual(store.allObjects(), [.ahmad])
   }
 
   func testSaveInvalidObject() {
@@ -36,7 +36,7 @@ final class MultiCoreDataStoreTests: XCTestCase {
 
   func testSaveObjects() throws {
     let store = createFreshUsersStore()
-    let users: [User] = [.john, .johnson, .james]
+    let users: [User] = [.ahmad, .dalia, .kareem]
 
     try store.save(users)
     XCTAssertEqual(store.objectsCount, 3)
@@ -46,7 +46,7 @@ final class MultiCoreDataStoreTests: XCTestCase {
   func testSaveInvalidObjects() {
     let store = createFreshUsersStore()
 
-    XCTAssertThrowsError(try store.save([.james, .john, .invalid]))
+    XCTAssertThrowsError(try store.save([.kareem, .ahmad, .invalid]))
     XCTAssertEqual(store.objectsCount, 0)
     XCTAssertEqual(store.allObjects(), [])
   }
@@ -54,63 +54,66 @@ final class MultiCoreDataStoreTests: XCTestCase {
   func testObject() {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertEqual(store.object(withId: User.johnson.id), .johnson)
+    XCTAssertNoThrow(try store.save(.dalia))
+    XCTAssertEqual(store.object(withId: User.dalia.id), .dalia)
 
     XCTAssertNil(store.object(withId: 123))
   }
 
   func testObjects() {
     let store = createFreshUsersStore()
-    XCTAssertNoThrow(try store.save([.john, .james]))
-    XCTAssertEqual(store.objects(withIds: [User.john.id, User.james.id, 5]), [.john, .james])
+    XCTAssertNoThrow(try store.save([.ahmad, .kareem]))
+    XCTAssertEqual(
+      store.objects(withIds: [User.ahmad.id, User.kareem.id, 5]),
+      [.ahmad, .kareem]
+    )
   }
 
   func testAllObjects() {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.john))
-    XCTAssertEqual(store.allObjects(), [.john])
+    XCTAssertNoThrow(try store.save(.ahmad))
+    XCTAssertEqual(store.allObjects(), [.ahmad])
 
-    XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertEqual(store.allObjects(), [.john, .johnson])
+    XCTAssertNoThrow(try store.save(.dalia))
+    XCTAssertEqual(store.allObjects(), [.ahmad, .dalia])
 
-    XCTAssertNoThrow(try store.save(.james))
-    XCTAssertEqual(store.allObjects(), [.john, .johnson, .james])
+    XCTAssertNoThrow(try store.save(.kareem))
+    XCTAssertEqual(store.allObjects(), [.ahmad, .dalia, .kareem])
   }
 
   func testRemoveObject() throws {
     let store = createFreshUsersStore()
 
-    XCTAssertNoThrow(try store.save(.james))
+    XCTAssertNoThrow(try store.save(.kareem))
     XCTAssertEqual(store.objectsCount, 1)
-    XCTAssertEqual(store.allObjects(), [.james])
+    XCTAssertEqual(store.allObjects(), [.kareem])
 
     try store.remove(withId: 123)
     XCTAssertEqual(store.objectsCount, 1)
-    XCTAssertEqual(store.allObjects(), [.james])
+    XCTAssertEqual(store.allObjects(), [.kareem])
 
-    try store.remove(withId: User.james.id)
+    try store.remove(withId: User.kareem.id)
     XCTAssertEqual(store.objectsCount, 0)
     XCTAssert(store.allObjects().isEmpty)
   }
 
   func testRemoveObjects() throws {
     let store = createFreshUsersStore()
-    try store.save(.james)
-    try store.save(.johnson)
+    try store.save(.kareem)
+    try store.save(.dalia)
     XCTAssertEqual(store.objectsCount, 2)
 
-    try store.remove(withIds: [User.james.id, 5, 6, 8])
+    try store.remove(withIds: [User.kareem.id, 5, 6, 8])
     XCTAssertEqual(store.objectsCount, 1)
-    XCTAssertEqual(store.allObjects(), [.johnson])
+    XCTAssertEqual(store.allObjects(), [.dalia])
   }
 
   func testRemoveAll() throws {
     let store = createFreshUsersStore()
-    try store.save(.john)
-    try store.save(.johnson)
-    try store.save(.james)
+    try store.save(.ahmad)
+    try store.save(.dalia)
+    try store.save(.kareem)
 
     try store.removeAll()
     XCTAssertEqual(store.objectsCount, 0)
@@ -121,20 +124,20 @@ final class MultiCoreDataStoreTests: XCTestCase {
     let store = createFreshUsersStore()
     XCTAssertFalse(store.containsObject(withId: 10))
 
-    try store.save(.john)
-    XCTAssert(store.containsObject(withId: User.john.id))
+    try store.save(.ahmad)
+    XCTAssert(store.containsObject(withId: User.ahmad.id))
   }
 
   func testUpdatingSameObjectDoesNotChangeCount() throws {
     let store = createFreshUsersStore()
 
-    let users: [User] = [.john, .johnson, .james]
+    let users: [User] = [.ahmad, .dalia, .kareem]
     try store.save(users)
 
-    var john = User.john
+    var user = User.ahmad
     for i in 0..<10 {
-      john.firstName = "\(i)"
-      try store.save(john)
+      user.firstName = "\(i)"
+      try store.save(user)
     }
 
     XCTAssertEqual(store.objectsCount, users.count)
@@ -145,7 +148,12 @@ final class MultiCoreDataStoreTests: XCTestCase {
     let expectation1 = XCTestExpectation(description: "Store has 1000 items.")
     for i in 0..<1_000 {
       Thread.detachNewThread {
-        let user = User(id: i, firstName: "", lastName: "", age: .random(in: 1..<90))
+        let user = User(
+          id: i,
+          firstName: "",
+          lastName: "",
+          age: .random(in: 1..<90)
+        )
         try? store.save(user)
       }
     }
@@ -172,7 +180,9 @@ final class MultiCoreDataStoreTests: XCTestCase {
 // MARK: - Helpers
 
 private extension MultiCoreDataStoreTests {
-  func createFreshUsersStore(databaseName: String = "users") -> MultiCoreDataStore<User> {
+  func createFreshUsersStore(
+    databaseName: String = "users"
+  ) -> MultiCoreDataStore<User> {
     let store = MultiCoreDataStore<User>(databaseName: databaseName)
     XCTAssertNoThrow(try store.removeAll())
     return store

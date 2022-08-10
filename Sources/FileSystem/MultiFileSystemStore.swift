@@ -1,8 +1,13 @@
 import Blueprints
 import Foundation
 
-/// Multi object file system store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to the file system.
-public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiObjectStore {
+/// The multi object file system store offers a convenient and type-safe way to store and retrieve a collection
+/// of `Codable` and `Identifiable` objects as json files using the file system.
+///
+/// > Thread safety: This is a thread-safe class.
+public final class MultiFileSystemStore<
+  Object: Codable & Identifiable
+>: MultiObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
   let manager = FileManager.default
@@ -11,7 +16,8 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
 
   /// Store's unique identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let uniqueIdentifier: String
 
   /// Directory where the store folder is created.
@@ -19,10 +25,15 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
 
   /// Initialize store with given identifier.
   ///
-  /// **Warning**: Never use the same identifier for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter uniqueIdentifier: store's unique identifier.
-  /// - Parameter directory: directory where the store folder is created. Defaults to `.applicationSupportDirectory`
+  /// - Parameter directory: directory where the store folder is created.
+  /// Defaults to `.applicationSupportDirectory`
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same identifier and directory.
   required public init(
     uniqueIdentifier: String,
     directory: FileManager.SearchPathDirectory = .applicationSupportDirectory
@@ -31,7 +42,7 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
     self.directory = directory
   }
 
-  // MARK: - Store
+  // MARK: - MultiObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
@@ -50,7 +61,10 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   /// - Throws error: any encoding errors.
   public func save(_ objects: [Object]) throws {
     try sync {
-      let pairs = try objects.map { (url: try url(forObject: $0), data: try encoder.encode($0)) }
+      let pairs = try objects.map { (
+        url: try url(forObject: $0),
+        data: try encoder.encode($0)
+      ) }
       pairs.forEach { pair in
         manager.createFile(atPath: pair.url.path, contents: pair.data)
       }
@@ -58,6 +72,9 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   }
 
   /// The number of all objects stored in store.
+  ///
+  /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
+  /// in DEBUG.
   public var objectsCount: Int {
     do {
       let storeURL = try storeURL()
@@ -74,6 +91,9 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   }
 
   /// Wether the store contains a saved object with the given id.
+  ///
+  /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
+  /// in DEBUG.
   public func containsObject(withId id: Object.ID) -> Bool {
     do {
       let path = try url(forObjectWithId: id).path
@@ -85,6 +105,10 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   }
 
   /// Returns an object for the given id, or `nil` if no object is found.
+  ///
+  /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Parameter id: object id.
   /// - Returns: object with the given id, or`nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
@@ -99,6 +123,10 @@ public final class MultiFileSystemStore<Object: Codable & Identifiable>: MultiOb
   }
 
   /// Returns all objects in the store.
+  ///
+  /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Returns: collection containing all objects stored in store.
   public func allObjects() -> [Object] {
     do {
@@ -151,12 +179,20 @@ extension MultiFileSystemStore {
 
   func storeURL() throws -> URL {
     let url = try manager
-      .url(for: directory, in: .userDomainMask, appropriateFor: nil, create: true)
+      .url(
+        for: directory,
+        in: .userDomainMask,
+        appropriateFor: nil,
+        create: true
+      )
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("MultiObjects", isDirectory: true)
       .appendingPathComponent(uniqueIdentifier, isDirectory: true)
     if manager.fileExists(atPath: url.path) == false {
-      try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true)
+      try manager.createDirectory(
+        atPath: url.path,
+        withIntermediateDirectories: true
+      )
     }
     return url
   }

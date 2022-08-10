@@ -2,8 +2,13 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// Multi object Core Data store offers a convenient way to store and retrieve a collection of `Codable` and `Identifiable` objects to a Core Data database.
-public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObjectStore {
+/// The multi object Core Data store offers a convenient and type-safe way to store and retrieve a collection
+/// of `Codable` and `Identifiable` objects to a Core Data database.
+///
+/// > Thread safety: This is a thread-safe class.
+public final class MultiCoreDataStore<
+  Object: Codable & Identifiable
+>: MultiObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
   let lock = NSRecursiveLock()
@@ -12,20 +17,25 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
 
   /// Store's database name.
   ///
-  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same name for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let databaseName: String
 
   /// Initialize store with given database name.
   ///
-  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same name for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter databaseName: store's database name.
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same database name.
   public init(databaseName: String) {
     self.databaseName = databaseName
     self.database = .init(name: databaseName)
   }
 
-  // MARK: - Store
+  // MARK: - MultiObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
@@ -53,7 +63,10 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   /// - Throws error: any encoding errors.
   public func save(_ objects: [Object]) throws {
     try sync {
-      let pairs = try objects.map({ (key: key(for: $0), data: try encoder.encode($0)) })
+      let pairs = try objects.map { (
+        key: key(for: $0),
+        data: try encoder.encode($0)
+      ) }
       try pairs.forEach { pair in
         let request = Entity.fetchRequest(id: pair.key)
         if let savedEntity = try database.context.fetch(request).first {
@@ -71,6 +84,9 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   }
 
   /// The number of all objects stored in store.
+  ///
+  /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
+  /// console in DEBUG.
   public var objectsCount: Int {
     let request = Entity.fetchRequest()
     do {
@@ -82,6 +98,12 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   }
 
   /// Wether the store contains a saved object with the given id.
+  ///
+  /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
+  /// console in DEBUG.
+  ///
+  /// - Parameter id: object id.
+  /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     let key = key(for: id)
     let request = Entity.fetchRequest(id: key)
@@ -95,6 +117,10 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   }
 
   /// Returns an object for the given id, or `nil` if no object is found.
+  ///
+  /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
+  /// console in DEBUG.
+  ///
   /// - Parameter id: object id.
   /// - Returns: object with the given id, or`nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
@@ -111,6 +137,10 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   }
 
   /// Returns all objects in the store.
+  ///
+  /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
+  /// console in DEBUG.
+  ///
   /// - Returns: collection containing all objects stored in store.
   public func allObjects() -> [Object] {
     let request = Entity.fetchRequest()

@@ -4,8 +4,8 @@ struct User: Codable, Identifiable, Hashable {
   init(
     id: Int,
     firstName: String,
-    lastName: String,
-    age: Double
+    lastName: String = "",
+    age: Double = 30
   ) {
     self.id = id
     self.firstName = firstName
@@ -38,8 +38,9 @@ extension User: CustomStringConvertible {
 }
 
 extension User {
-  static let john = Self(id: 1, firstName: "John", lastName: "Appleseed", age: 21.5)
-  static let johnson = Self(id: 2, firstName: "Johnson", lastName: "Smith", age: 26.3)
-  static let james = Self(id: 3, firstName: "James", lastName: "Robert", age: 14)
-  static let invalid = Self(id: 4, firstName: "", lastName: "", age: .nan)
+  static let ahmad = Self(id: 1, firstName: "Ahmad")
+  static let dalia = Self(id: 2, firstName: "Dalia")
+  static let kareem = Self(id: 3, firstName: "Kareem")
+
+  static let invalid = Self(id: 4, firstName: "", age: .nan)
 }

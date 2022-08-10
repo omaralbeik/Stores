@@ -2,7 +2,9 @@ import Blueprints
 import Foundation
 
 /// Multi object store fake that uses a dictionary to store and retrieve objects.
-public final class MultiObjectStoreFake<Object: Codable & Identifiable>: MultiObjectStore {
+public final class MultiObjectStoreFake<
+  Object: Codable & Identifiable
+>: MultiObjectStore {
   /// Dictionary used to store and retrieve objects.
   public var dictionary: [Object.ID: Object] = [:]
 
@@ -12,7 +14,8 @@ public final class MultiObjectStoreFake<Object: Codable & Identifiable>: MultiOb
   /// Create a new store fake with a given dictionary and an option error to be thrown.
   /// - Parameters:
   ///   - dictionary: dictionary used to store and retrieve objects. Defaults to an empty dictionary.
-  ///   - error: optional error. Setting this will make any throwing method of the store throw the set error. Defaults to `nil`.
+  ///   - error: optional error. Setting this will make any throwing method of the store throw the set error.
+  ///   Defaults to `nil`.
   public init(dictionary: [Object.ID: Object] = [:], error: Error? = nil) {
     self.dictionary = dictionary
     self.error = error

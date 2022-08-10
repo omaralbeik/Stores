@@ -2,7 +2,10 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// Single Core Data object store offers a convenient way to store and retrieve a single `Codable` object to a Core Data database.
+/// The single Core Data object store offers a convenient and type-safe way to store and retrieve a single
+/// `Codable` object by saving it in a Core Data database.
+///
+/// > Thread safety: This is a thread-safe class.
 public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
@@ -13,14 +16,19 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
 
   /// Store's database name.
   ///
-  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same name for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   public let databaseName: String
 
   /// Initialize store with given database name.
   ///
-  /// **Warning**: Never use the same name for multiple stores with different object types, doing this might cause stores to have corrupted data.
+  /// > Important: Never use the same name for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter databaseName: store's database name.
+  ///
+  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same database name.
   public init(databaseName: String) {
     self.databaseName = databaseName
     self.database = .init(name: databaseName)
@@ -28,6 +36,9 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
 
   // MARK: - Store
 
+  /// Saves an object to store.
+  /// - Parameter object: object to be saved.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
     let data = try encoder.encode(object)
     let request = Entity.fetchRequest()
@@ -43,6 +54,12 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
     try database.context.save()
   }
 
+  /// Returns the object saved in the store.
+  ///
+  /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
+  /// console in DEBUG.
+  ///
+  /// - Returns: object saved in the store. `nil` if no object is saved in store.
   public func object() -> Object? {
     let request = Entity.fetchRequest()
 
@@ -56,6 +73,8 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
     }
   }
 
+  /// Removes any saved object in the store.
+  /// - Throws error: any error that might occur during the removal operation.
   public func remove() throws {
     let request = Entity.fetchRequest()
     let entities = try database.context.fetch(request)

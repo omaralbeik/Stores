@@ -7,11 +7,11 @@ import XCTest
 final class SingleObjectStoreTests: XCTestCase {
   func testSaveOptionalObject() throws {
     let store = createFreshUserStore()
-    let user: User? = .john
+    let user: User? = .ahmad
 
     try store.save(user)
-    XCTAssertEqual(store.object(), .john)
-    XCTAssertEqual(store.underlyingObject, .john)
+    XCTAssertEqual(store.object(), .ahmad)
+    XCTAssertEqual(store.underlyingObject, .ahmad)
 
     try store.save(nil)
     XCTAssertNil(store.object())
