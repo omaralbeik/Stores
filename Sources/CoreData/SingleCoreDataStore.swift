@@ -9,6 +9,7 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   let lock = NSRecursiveLock()
   let database: Database
   let key = "object"
+  let logger = Logger()
 
   /// Store's database name.
   ///
@@ -32,10 +33,12 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
     let request = Entity.fetchRequest()
     if let savedEntity = try database.context.fetch(request).first {
       savedEntity.data = data
+      savedEntity.lastUpdated = Date()
     } else {
       let newEntity = Entity(context: database.context)
       newEntity.id = key
       newEntity.data = data
+      newEntity.lastUpdated = Date()
     }
     try database.context.save()
   }
@@ -48,7 +51,7 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
       guard let data = result.first?.data else { return nil }
       return try decoder.decode(Object.self, from: data)
     } catch {
-      print(error.localizedDescription)
+      logger.log(error)
       return nil
     }
   }

@@ -36,11 +36,11 @@ final class MultiCoreDataStoreTests: XCTestCase {
 
   func testSaveObjects() throws {
     let store = createFreshUsersStore()
-    let users: Set<User> = [.john, .johnson, .james]
+    let users: [User] = [.john, .johnson, .james]
 
-    try store.save(Array(users))
+    try store.save(users)
     XCTAssertEqual(store.objectsCount, 3)
-    XCTAssertEqual(Set(store.allObjects()), users)
+    XCTAssertEqual(store.allObjects(), users)
   }
 
   func testSaveInvalidObjects() {
@@ -70,13 +70,13 @@ final class MultiCoreDataStoreTests: XCTestCase {
     let store = createFreshUsersStore()
 
     XCTAssertNoThrow(try store.save(.john))
-    XCTAssertEqual(Set(store.allObjects()), [.john])
+    XCTAssertEqual(store.allObjects(), [.john])
 
     XCTAssertNoThrow(try store.save(.johnson))
-    XCTAssertEqual(Set(store.allObjects()), [.john, .johnson])
+    XCTAssertEqual(store.allObjects(), [.john, .johnson])
 
     XCTAssertNoThrow(try store.save(.james))
-    XCTAssertEqual(Set(store.allObjects()), [.john, .johnson, .james])
+    XCTAssertEqual(store.allObjects(), [.john, .johnson, .james])
   }
 
   func testRemoveObject() throws {

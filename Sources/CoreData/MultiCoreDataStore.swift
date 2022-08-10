@@ -8,6 +8,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
   let decoder = JSONDecoder()
   let lock = NSRecursiveLock()
   let database: Database
+  let logger = Logger()
 
   /// Store's database name.
   ///
@@ -36,10 +37,12 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       let request = Entity.fetchRequest(id: key)
       if let savedEntity = try database.context.fetch(request).first {
         savedEntity.data = data
+        savedEntity.lastUpdated = Date()
       } else {
         let newEntity = Entity(context: database.context)
         newEntity.id = key
         newEntity.data = data
+        newEntity.lastUpdated = Date()
       }
       try database.context.save()
     }
@@ -55,10 +58,12 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
         let request = Entity.fetchRequest(id: pair.key)
         if let savedEntity = try database.context.fetch(request).first {
           savedEntity.data = pair.data
+          savedEntity.lastUpdated = Date()
         } else {
           let newEntity = Entity(context: database.context)
           newEntity.id = pair.key
           newEntity.data = pair.data
+          newEntity.lastUpdated = Date()
         }
       }
       try database.context.save()
@@ -71,7 +76,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
     do {
       return try database.context.count(for: request)
     } catch {
-      print(error.localizedDescription)
+      logger.log(error)
       return 0
     }
   }
@@ -84,7 +89,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       let count = try database.context.count(for: request)
       return count != 0
     } catch {
-      print(error.localizedDescription)
+      logger.log(error)
       return false
     }
   }
@@ -100,7 +105,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       }
       return try decoder.decode(Object.self, from: data)
     } catch {
-      print(error.localizedDescription)
+      logger.log(error)
       return nil
     }
   }
@@ -115,7 +120,7 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
         .compactMap { try decoder.decode(Object.self, from: $0) }
 
     } catch {
-      print(error.localizedDescription)
+      logger.log(error)
       return []
     }
   }
@@ -148,7 +153,8 @@ public final class MultiCoreDataStore<Object: Codable & Identifiable>: MultiObje
       for entity in entities {
         database.context.delete(entity)
       }
-      try database.context.save()  }
+      try database.context.save()
+    }
   }
 }
 
