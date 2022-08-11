@@ -6,7 +6,7 @@ let package = Package(
   name: "Stores",
   platforms: [
     .iOS(.v13),
-    .macOS(.v10_15),
+    .macOS(.v12),
     .tvOS(.v13),
     .watchOS(.v6)
   ],
@@ -81,8 +81,7 @@ let package = Package(
       dependencies: [
         "Blueprints",
       ],
-      path: "Sources/CoreData",
-      resources: [.process("Resources")]
+      path: "Sources/CoreData"
     ),
     .testTarget(
       name: "CoreDataStoreTests",

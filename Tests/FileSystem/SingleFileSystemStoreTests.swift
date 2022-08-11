@@ -122,6 +122,7 @@ private extension SingleFileSystemStoreTests {
       uniqueIdentifier: identifier,
       directory: directory
     )
+    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.remove())
     return store
   }

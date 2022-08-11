@@ -184,6 +184,7 @@ private extension MultiCoreDataStoreTests {
     databaseName: String = "users"
   ) -> MultiCoreDataStore<User> {
     let store = MultiCoreDataStore<User>(databaseName: databaseName)
+    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.removeAll())
     return store
   }

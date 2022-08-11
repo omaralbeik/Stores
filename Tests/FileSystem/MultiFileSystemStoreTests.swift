@@ -281,6 +281,7 @@ private extension MultiFileSystemStoreTests {
       uniqueIdentifier: identifier,
       directory: directory
     )
+    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.removeAll())
     return store
   }
