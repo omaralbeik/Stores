@@ -16,7 +16,7 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
-  public let uniqueIdentifier: String
+  public let identifier: String
 
   /// Directory where the store folder is created.
   public let directory: FileManager.SearchPathDirectory
@@ -26,17 +26,17 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   ///
-  /// - Parameter uniqueIdentifier: store's unique identifier.
+  /// - Parameter identifier: store's unique identifier.
   /// - Parameter directory: directory where the store folder is created.
   /// Defaults to `.applicationSupportDirectory`
   ///
   /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
   /// with a same identifier and directory.
   required public init(
-    uniqueIdentifier: String,
+    identifier: String,
     directory: FileManager.SearchPathDirectory = .applicationSupportDirectory
   ) {
-    self.uniqueIdentifier = uniqueIdentifier
+    self.identifier = identifier
     self.directory = directory
   }
 
@@ -99,7 +99,7 @@ extension SingleFileSystemStore {
       )
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("SingleObject", isDirectory: true)
-      .appendingPathComponent(uniqueIdentifier, isDirectory: true)
+      .appendingPathComponent(identifier, isDirectory: true)
     if manager.fileExists(atPath: url.path) == false {
       try manager.createDirectory(
         atPath: url.path,

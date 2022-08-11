@@ -8,7 +8,7 @@ final class SingleUserDefaultsStoreTests: XCTestCase {
   func testCreateStore() {
     let identifier = UUID().uuidString
     let store = createFreshUserStore(identifier: identifier)
-    XCTAssertEqual(store.uniqueIdentifier, identifier)
+    XCTAssertEqual(store.identifier, identifier)
   }
 
   func testSaveObject() throws {
@@ -57,7 +57,7 @@ private extension SingleUserDefaultsStoreTests {
   func createFreshUserStore(
     identifier: String = "user"
   ) -> SingleUserDefaultsStore<User> {
-    let store = SingleUserDefaultsStore<User>(uniqueIdentifier: identifier)
+    let store = SingleUserDefaultsStore<User>(identifier: identifier)
     store.remove()
     return store
   }

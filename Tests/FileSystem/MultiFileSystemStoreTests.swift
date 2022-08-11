@@ -15,7 +15,7 @@ final class MultiFileSystemStoreTests: XCTestCase {
       identifier: identifier,
       directory: directory
     )
-    XCTAssertEqual(store.uniqueIdentifier, identifier)
+    XCTAssertEqual(store.identifier, identifier)
     XCTAssertEqual(store.directory, directory)
   }
 
@@ -90,6 +90,24 @@ final class MultiFileSystemStoreTests: XCTestCase {
     XCTAssertEqual(try allUsers(), [.dalia])
   }
 
+  func testObjectLogging() throws {
+    let store = createFreshUsersStore()
+    try store.save(.ahmad)
+    let url = try url(forUser: .ahmad)
+    let data = "{]".data(using: .utf8)!
+    try data.write(to: url)
+
+    let user = store.object(withId: User.ahmad.id)
+    XCTAssertNil(user)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiFileSystemStore.object(withId:)`. \
+      Error: The data couldn’t be read because it isn’t in the correct format.
+      """
+    )
+  }
+
   func testObjects() throws {
     let store = createFreshUsersStore()
     try store.save([.ahmad, .kareem])
@@ -98,6 +116,23 @@ final class MultiFileSystemStoreTests: XCTestCase {
       [.ahmad, .kareem]
     )
     XCTAssertEqual(try allUsers(), [.ahmad, .kareem])
+  }
+
+  func testAllObjectsLogging() throws {
+    let store = createFreshUsersStore()
+    try store.save([.ahmad, .dalia, .kareem])
+    let url = try url(forUser: .dalia)
+    let data = "{]".data(using: .utf8)!
+    try data.write(to: url)
+
+    XCTAssertEqual(store.allObjects(), [.ahmad, .kareem])
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiFileSystemStore.allObjects()`. \
+      Error: The data couldn’t be read because it isn’t in the correct format.
+      """
+    )
   }
 
   func testAllObjects() throws {
@@ -278,7 +313,7 @@ private extension MultiFileSystemStoreTests {
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) -> MultiFileSystemStore<User> {
     let store = MultiFileSystemStore<User>(
-      uniqueIdentifier: identifier,
+      identifier: identifier,
       directory: directory
     )
     store.logger.printEnabled = false

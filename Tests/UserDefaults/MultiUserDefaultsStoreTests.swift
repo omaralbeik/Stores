@@ -8,7 +8,7 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
   func testCreateStore() {
     let identifier = UUID().uuidString
     let store = createFreshUsersStore(identifier: identifier)
-    XCTAssertEqual(store.uniqueIdentifier, identifier)
+    XCTAssertEqual(store.identifier, identifier)
   }
 
   func testSaveObject() throws {
@@ -207,7 +207,7 @@ private extension MultiUserDefaultsStoreTests {
   func createFreshUsersStore(
     identifier: String = "users"
   ) -> MultiUserDefaultsStore<User> {
-    let store = MultiUserDefaultsStore<User>(uniqueIdentifier: identifier)
+    let store = MultiUserDefaultsStore<User>(identifier: identifier)
     store.removeAll()
     return store
   }

@@ -44,7 +44,7 @@ public final class MultiCoreDataStore<
     try sync {
       let data = try encoder.encode(object)
       let key = key(for: object)
-      let request = Entity.fetchRequest(id: key)
+      let request = database.entityFetchRequest(key)
       if let savedEntity = try database.context.fetch(request).first {
         savedEntity.data = data
         savedEntity.lastUpdated = Date()
@@ -68,7 +68,7 @@ public final class MultiCoreDataStore<
         data: try encoder.encode($0)
       ) }
       try pairs.forEach { pair in
-        let request = Entity.fetchRequest(id: pair.key)
+        let request = database.entityFetchRequest(pair.key)
         if let savedEntity = try database.context.fetch(request).first {
           savedEntity.data = pair.data
           savedEntity.lastUpdated = Date()
@@ -88,7 +88,7 @@ public final class MultiCoreDataStore<
   /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
   /// console in DEBUG.
   public var objectsCount: Int {
-    let request = Entity.fetchRequest()
+    let request = database.entitiesFetchRequest()
     do {
       return try database.context.count(for: request)
     } catch {
@@ -106,7 +106,7 @@ public final class MultiCoreDataStore<
   /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     let key = key(for: id)
-    let request = Entity.fetchRequest(id: key)
+    let request = database.entityFetchRequest(key)
     do {
       let count = try database.context.count(for: request)
       return count != 0
@@ -124,7 +124,7 @@ public final class MultiCoreDataStore<
   /// - Parameter id: object id.
   /// - Returns: object with the given id, or`nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
-    let request = Entity.fetchRequest(id: key(for: id))
+    let request = database.entityFetchRequest(key(for: id))
     do {
       guard let data = try database.context.fetch(request).first?.data else {
         return nil
@@ -143,12 +143,18 @@ public final class MultiCoreDataStore<
   ///
   /// - Returns: collection containing all objects stored in store.
   public func allObjects() -> [Object] {
-    let request = Entity.fetchRequest()
+    let request = database.entitiesFetchRequest()
     do {
       return try database.context.fetch(request)
         .compactMap(\.data)
-        .compactMap { try decoder.decode(Object.self, from: $0) }
-
+        .compactMap {
+          do {
+            return try decoder.decode(Object.self, from: $0)
+          } catch {
+            logger.log(error)
+            return nil
+          }
+        }
     } catch {
       logger.log(error)
       return []
@@ -159,7 +165,7 @@ public final class MultiCoreDataStore<
   /// - Parameter id: id for the object to be deleted.
   public func remove(withId id: Object.ID) throws {
     try sync {
-      let request = Entity.fetchRequest(id: key(for: id))
+      let request = database.entityFetchRequest(key(for: id))
       if let object = try database.context.fetch(request).first {
         database.context.delete(object)
       }
@@ -178,7 +184,7 @@ public final class MultiCoreDataStore<
   /// Removes all objects in store.
   public func removeAll() throws {
     try sync {
-      let request = Entity.fetchRequest()
+      let request = database.entitiesFetchRequest()
       let entities = try database.context.fetch(request)
       for entity in entities {
         database.context.delete(entity)
@@ -191,6 +197,9 @@ public final class MultiCoreDataStore<
 // MARK: - Helpers
 
 extension MultiCoreDataStore {
+  func perform(action: () throws -> Void) rethrows {
+    try action()
+  }
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
     try action()

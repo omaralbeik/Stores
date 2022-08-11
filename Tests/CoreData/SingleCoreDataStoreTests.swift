@@ -36,6 +36,25 @@ final class SingleCoreDataStoreTests: XCTestCase {
     try store.save(.dalia)
     XCTAssertEqual(store.object(), .dalia)
   }
+
+  func testObjectLogging() throws {
+    let store = createFreshUserStore()
+    try store.save(.ahmad)
+
+    let request = store.database.entityFetchRequest(store.key)
+    let entities = try store.database.context.fetch(request)
+    entities[0].data = "{]".data(using: .utf8)!
+    try store.database.context.save()
+
+    XCTAssertNil(store.object())
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `SingleCoreDataStore.object()`. \
+      Error: The data couldn’t be read because it isn’t in the correct format.
+      """
+    )
+  }
 }
 
 // MARK: - Helpers

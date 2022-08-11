@@ -14,26 +14,31 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 
   /// Store's unique identifier.
   ///
+  /// > Note: This is used as the suite name for the underlying UserDefaults store.
+  ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
-  public let uniqueIdentifier: String
+  public let identifier: String
 
   /// Initialize store with given identifier.
   ///
+  /// > Note: This is used as the suite name for the underlying UserDefaults store. Using an invalid name like
+  /// `default` will cause a precondition failure.
+  /// 
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   ///
-  /// - Parameter uniqueIdentifier: store's unique identifier.
+  /// - Parameter identifier: store's unique identifier.
   ///
   /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
   /// with a same identifier.
-  required public init(uniqueIdentifier: String) {
-    guard let store = UserDefaults(suiteName: uniqueIdentifier) else {
+  required public init(identifier: String) {
+    guard let store = UserDefaults(suiteName: identifier) else {
       preconditionFailure(
-        "Can not create store with identifier: '\(uniqueIdentifier)'."
+        "Can not create store with identifier: '\(identifier)'."
       )
     }
-    self.uniqueIdentifier = uniqueIdentifier
+    self.identifier = identifier
     self.store = store
   }
 
@@ -59,8 +64,8 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   /// Removes any saved object in the store.
   public func remove() {
     sync {
-      store.removePersistentDomain(forName: uniqueIdentifier)
-      store.removeSuite(named: uniqueIdentifier)
+      store.removePersistentDomain(forName: identifier)
+      store.removeSuite(named: identifier)
     }
   }
 }

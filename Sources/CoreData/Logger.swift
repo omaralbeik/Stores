@@ -1,4 +1,5 @@
 import Foundation
+
 final class Logger {
   init(printEnabled: Bool = true) {
     self.printEnabled = printEnabled

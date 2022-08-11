@@ -14,7 +14,7 @@ final class SingleFileSystemStoreTests: XCTestCase {
       identifier: identifier,
       directory: directory
     )
-    XCTAssertEqual(store.uniqueIdentifier, identifier)
+    XCTAssertEqual(store.identifier, identifier)
     XCTAssertEqual(store.directory, directory)
   }
 
@@ -119,7 +119,7 @@ private extension SingleFileSystemStoreTests {
     directory: FileManager.SearchPathDirectory = .cachesDirectory
   ) -> SingleFileSystemStore<User> {
     let store = SingleFileSystemStore<User>(
-      uniqueIdentifier: identifier,
+      identifier: identifier,
       directory: directory
     )
     store.logger.printEnabled = false

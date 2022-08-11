@@ -8,6 +8,18 @@ private final class Container: NSPersistentContainer {
 }
 
 final class Database {
+  let context: NSManagedObjectContext
+
+  init(name: String) {
+    let container = Container(name: name, managedObjectModel: Self.entityModel)
+    container.loadPersistentStores { _, error in
+      if let error = error {
+        preconditionFailure("Failed to load store with error: \(error).")
+      }
+    }
+    context = container.viewContext
+  }
+
   static let entityModel: NSManagedObjectModel = {
     let entity = NSEntityDescription()
     entity.name = "Entity"
@@ -36,16 +48,18 @@ final class Database {
 
     return model
   }()
-  
-  let context: NSManagedObjectContext
 
-  init(name: String) {
-    let container = Container(name: name, managedObjectModel: Self.entityModel)
-    container.loadPersistentStores { _, error in
-      if let error = error {
-        preconditionFailure("Failed to load store with error: \(error).")
-      }
-    }
-    context = container.viewContext
+  let entitiesFetchRequest: () -> NSFetchRequest<Entity> = {
+    let request = NSFetchRequest<Entity>(entityName: "Entity")
+    request.sortDescriptors = [
+      .init(key: "lastUpdated", ascending: true)
+    ]
+    return request
+  }
+
+  let entityFetchRequest: (String) -> NSFetchRequest<Entity> = { id in
+    let request = NSFetchRequest<Entity>(entityName: "Entity")
+    request.predicate = NSPredicate(format: "id == %@", id)
+    return request
   }
 }

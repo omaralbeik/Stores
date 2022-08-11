@@ -60,6 +60,26 @@ final class MultiCoreDataStoreTests: XCTestCase {
     XCTAssertNil(store.object(withId: 123))
   }
 
+  func testObjectLogging() throws {
+    let store = createFreshUsersStore()
+    try store.save(.ahmad)
+
+    let request = store.database.entityFetchRequest(store.key(for: .ahmad))
+    let entities = try store.database.context.fetch(request)
+    entities[0].data = "{]".data(using: .utf8)!
+    try store.database.context.save()
+
+    let user = store.object(withId: User.ahmad.id)
+    XCTAssertNil(user)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiCoreDataStore.object(withId:)`. \
+      Error: The data couldn’t be read because it isn’t in the correct format.
+      """
+    )
+  }
+
   func testObjects() {
     let store = createFreshUsersStore()
     XCTAssertNoThrow(try store.save([.ahmad, .kareem]))
@@ -80,6 +100,25 @@ final class MultiCoreDataStoreTests: XCTestCase {
 
     XCTAssertNoThrow(try store.save(.kareem))
     XCTAssertEqual(store.allObjects(), [.ahmad, .dalia, .kareem])
+  }
+
+  func testAllObjectsLogging() throws {
+    let store = createFreshUsersStore()
+    try store.save([.ahmad, .dalia, .kareem])
+
+    let request = store.database.entityFetchRequest(store.key(for: .dalia))
+    let entities = try store.database.context.fetch(request)
+    entities[0].data = "{]".data(using: .utf8)!
+    try store.database.context.save()
+
+    XCTAssertEqual(store.allObjects(), [.ahmad, .kareem])
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiCoreDataStore.allObjects()`. \
+      Error: The data couldn’t be read because it isn’t in the correct format.
+      """
+    )
   }
 
   func testRemoveObject() throws {
@@ -131,13 +170,17 @@ final class MultiCoreDataStoreTests: XCTestCase {
   func testUpdatingSameObjectDoesNotChangeCount() throws {
     let store = createFreshUsersStore()
 
-    let users: [User] = [.ahmad, .dalia, .kareem]
+    var users: [User] = [.ahmad, .dalia, .kareem]
     try store.save(users)
 
-    var user = User.ahmad
     for i in 0..<10 {
-      user.firstName = "\(i)"
-      try store.save(user)
+      users[0].firstName = "\(i)"
+      try store.save(users[0])
+
+      users[1].lastName = "\(i)"
+      users[2].lastName = "\(i)"
+
+      try store.save(Array(users[1...]))
     }
 
     XCTAssertEqual(store.objectsCount, users.count)
