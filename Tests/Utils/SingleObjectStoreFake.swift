@@ -42,4 +42,3 @@ public final class SingleObjectStoreFake<Object: Codable>: SingleObjectStore {
     underlyingObject = nil
   }
 }
-
