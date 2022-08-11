@@ -186,8 +186,8 @@ final class MultiFileSystemStoreTests: XCTestCase {
 
   func testThreadSafety() throws {
     let store = createFreshUsersStore()
-    let expectation1 = XCTestExpectation(description: "Store has 1000 items.")
-    for i in 0..<1_000 {
+    let expectation1 = XCTestExpectation(description: "Store has 200 items.")
+    for i in 0..<200 {
       Thread.detachNewThread {
         let user = User(
           id: i,
@@ -200,19 +200,19 @@ final class MultiFileSystemStoreTests: XCTestCase {
     }
     Thread.sleep(forTimeInterval: 2)
     let allUsersCount1 = try allUsers().count
-    if store.objectsCount == 1_000 && allUsersCount1 == 1_000 {
+    if store.objectsCount == 200 && allUsersCount1 == 200 {
       expectation1.fulfill()
     }
 
-    let expectation2 = XCTestExpectation(description: "Store has 500 items.")
-    for i in 0..<500 {
+    let expectation2 = XCTestExpectation(description: "Store has 100 items.")
+    for i in 0..<100 {
       Thread.detachNewThread {
         try? store.remove(withId: i)
       }
     }
     Thread.sleep(forTimeInterval: 2)
     let allUsersCount2 = try allUsers().count
-    if store.objectsCount == 500 && allUsersCount2 == 500 {
+    if store.objectsCount == 100 && allUsersCount2 == 100 {
       expectation2.fulfill()
     }
 

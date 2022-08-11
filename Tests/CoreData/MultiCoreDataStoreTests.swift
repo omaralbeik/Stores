@@ -145,8 +145,8 @@ final class MultiCoreDataStoreTests: XCTestCase {
 
   func testThreadSafety() {
     let store = createFreshUsersStore()
-    let expectation1 = XCTestExpectation(description: "Store has 1000 items.")
-    for i in 0..<1_000 {
+    let expectation1 = XCTestExpectation(description: "Store has 200 items.")
+    for i in 0..<200 {
       Thread.detachNewThread {
         let user = User(
           id: i,
@@ -158,18 +158,18 @@ final class MultiCoreDataStoreTests: XCTestCase {
       }
     }
     Thread.sleep(forTimeInterval: 2)
-    if store.objectsCount == 1_000 {
+    if store.objectsCount == 200 {
       expectation1.fulfill()
     }
 
-    let expectation2 = XCTestExpectation(description: "Store has 500 items.")
-    for i in 0..<500 {
+    let expectation2 = XCTestExpectation(description: "Store has 100 items.")
+    for i in 0..<100 {
       Thread.detachNewThread {
         try? store.remove(withId: i)
       }
     }
     Thread.sleep(forTimeInterval: 2)
-    if store.objectsCount == 500 {
+    if store.objectsCount == 100 {
       expectation2.fulfill()
     }
 
