@@ -15,19 +15,19 @@ final class Database {
 
     let idAttribute = NSAttributeDescription()
     idAttribute.name = "id"
-    idAttribute.type = .string
+    idAttribute.attributeType = .stringAttributeType
     idAttribute.isOptional = false
     entity.properties.append(idAttribute)
 
     let dataAttribute = NSAttributeDescription()
     dataAttribute.name = "data"
-    dataAttribute.type = .binaryData
+    dataAttribute.attributeType = .binaryDataAttributeType
     dataAttribute.isOptional = false
     entity.properties.append(dataAttribute)
 
     let lastUpdatedAttribute = NSAttributeDescription()
     lastUpdatedAttribute.name = "lastUpdated"
-    lastUpdatedAttribute.type = .date
+    lastUpdatedAttribute.attributeType = .dateAttributeType
     lastUpdatedAttribute.isOptional = false
     entity.properties.append(lastUpdatedAttribute)
 
