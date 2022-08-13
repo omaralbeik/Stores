@@ -1,6 +1,7 @@
 # Stores
 
 [![Stores](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml/badge.svg)](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/omaralbeik/Stores/branch/main/graph/badge.svg?token=iga0JA6Mwo)](https://codecov.io/gh/omaralbeik/Stores)
 
 A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, and more in a few lines of code!
 
