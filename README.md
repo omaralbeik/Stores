@@ -232,7 +232,7 @@ You can add Stores to an Xcode project by adding it as a package dependency.
 
 ## Credits and thanks
 
-- [Tom Harrington]() for writing ["Core Data Using Only Code"](https://www.atomicbird.com/blog/core-data-code-only/)
+- [Tom Harrington](https://twitter.com/atomicbird) for writing ["Core Data Using Only Code"](https://www.atomicbird.com/blog/core-data-code-only/)
 - [Keith Harrison](https://twitter.com/kharrison) for writing ["Testing Core Data In A Swift Package"](https://useyourloaf.com/blog/testing-core-data-in-a-swift-package/)
 ---
 
