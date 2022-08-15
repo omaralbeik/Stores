@@ -175,7 +175,7 @@ public final class MultiCoreDataStore<
   }
 
   /// Removes objects with given ids —if found—.
-  /// - Parameter id: id for the object to be deleted.
+  /// - Parameter ids: ids for the objects to be deleted.
   public func remove(withIds ids: [Object.ID]) throws {
     try sync {
       try ids.forEach(remove(withId:))

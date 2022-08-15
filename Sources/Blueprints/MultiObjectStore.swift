@@ -52,7 +52,7 @@ public protocol MultiObjectStore {
   /// Removes objects with given ids —if found—, and ignore any ids that does not represent objects stored
   /// in the store.
   /// **This method has a default implementation.**
-  /// - Parameter id: id for the object to be deleted.
+  /// - Parameter ids: ids for the objects to be deleted.
   /// - Throws error: any error that might occur during the removal operation.
   func remove(withIds ids: [Object.ID]) throws
 
@@ -87,7 +87,7 @@ public extension MultiObjectStore {
 
   /// Removes objects with given ids —if found—, and ignore any ids that does not represent objects stored
   /// in the store.
-  /// - Parameter id: id for the object to be deleted.
+  /// - Parameter ids: ids for the objects to be deleted.
   /// - Throws error: any error that might occur during the removal operation.
   func remove(withIds ids: [Object.ID]) throws {
     try ids.forEach(remove(withId:))

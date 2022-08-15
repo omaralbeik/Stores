@@ -95,6 +95,9 @@ public final class MultiFileSystemStore<
   ///
   /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
   /// in DEBUG.
+  ///
+  /// - Parameter id: object id.
+  /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     do {
       let path = try url(forObjectWithId: id).path

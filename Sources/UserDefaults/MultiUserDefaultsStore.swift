@@ -84,6 +84,8 @@ public final class MultiUserDefaultsStore<
   }
 
   /// Wether the store contains a saved object with the given id.
+  /// - Parameter id: object id.
+  /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     return object(withId: id) != nil
   }
@@ -118,7 +120,7 @@ public final class MultiUserDefaultsStore<
   }
 
   /// Removes objects with given ids —if found—.
-  /// - Parameter id: id for the object to be deleted.
+  /// - Parameter ids: ids for the objects to be deleted.
   public func remove(withIds ids: [Object.ID]) {
     sync {
       ids.forEach(remove(withId:))

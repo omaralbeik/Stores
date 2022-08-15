@@ -18,7 +18,6 @@ let package = Package(
     .library(name: "CoreDataStore", targets: ["CoreDataStore"]),
     .library(name: "StoresTestUtils", targets: ["TestUtils"]),
   ],
-  dependencies: [],
   targets: [
     // MARK: - Stores
     .target(

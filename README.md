@@ -221,7 +221,7 @@ You can add Stores to an Xcode project by adding it as a package dependency.
 1. From the **File** menu, select **Add Packages...**
 2. Enter "https://github.com/omaralbeik/Stores" into the package repository URL text field
 3. Depending on what you want to use Stores for, add the following target(s) to your app:
-    - `Stores`: the entire library with all stores
+    - `Stores`: the entire library with all stores.
     - `UserDefaultsStore`: use User Defaults to persist data.
     - `FileSystemStore`: persist data by saving it to the file system.
     - `CoreDataStore`: use a Core Data database to persist data.
@@ -232,8 +232,8 @@ You can add Stores to an Xcode project by adding it as a package dependency.
 
 ## Credits and thanks
 
-- [Tom Harrington](https://twitter.com/atomicbird) for writing ["Core Data Using Only Code"](https://www.atomicbird.com/blog/core-data-code-only/)
-- [Keith Harrison](https://twitter.com/kharrison) for writing ["Testing Core Data In A Swift Package"](https://useyourloaf.com/blog/testing-core-data-in-a-swift-package/)
+- [Tom Harrington](https://twitter.com/atomicbird) for writing ["Core Data Using Only Code"](https://www.atomicbird.com/blog/core-data-code-only/).
+- [Keith Harrison](https://twitter.com/kharrison) for writing ["Testing Core Data In A Swift Package"](https://useyourloaf.com/blog/testing-core-data-in-a-swift-package/).
 ---
 
 ## License
