@@ -3,44 +3,40 @@ import Foundation
 import Security
 
 /// The single Keychain object store offers a convenient and type-safe way to store and retrieve a single
-/// `Codable` object to the keychain.
+/// `Codable` object securely in the keychain.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
   let lock = NSRecursiveLock()
+  let key = "object"
 
-  /// Used for the `kSecAttrService` property to uniquely identify this keychain accessor.
+  /// Store's unique identifier.
   ///
-  /// > Note: This can be your app's bundle identifier.
-  public let serviceName: String
-
-  /// Store's account name.
-  ///
-  /// > Note: This is used for the `kSecAttrAccount` property to uniquely identify this keychain accessor.
-  public let account: String
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
+  public let identifier: String
 
   /// Store's accessibility level.
   public let accessibility: KeychainAccessibility
 
   /// Initialize store.
+  ///
+  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
+  ///
   /// - Parameters:
-  ///   - serviceName: used for the `kSecAttrService` property to uniquely identify this keychain
-  ///   accessor. This can be your app's bundle identifier.
-  ///   - account: used for the `kSecAttrAccount` property to uniquely identify this keychain
-  ///   accessor.
+  ///   - identifier: store's unique identifier.
   ///   - accessibility: store's accessibility level. Defaults to `.whenUnlockedThisDeviceOnly`
   ///
   /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
   /// with same parameters.
   required public init(
-    serviceName: String,
-    account: String,
+    identifier: String,
     accessibility: KeychainAccessibility = .whenUnlockedThisDeviceOnly
   ) {
-    self.serviceName = serviceName
-    self.account = account
+    self.identifier = identifier
     self.accessibility = accessibility
   }
 
@@ -122,12 +118,16 @@ extension SingleKeychainStore {
     }
   }
 
+  func serviceName() -> String {
+    return "com.omaralbeik.stores.single.\(identifier)"
+  }
+
   func generateQuery(with mutator: ((inout Query) -> Void)? = nil) -> Query {
     var query: Query = [
       kSecClass: kSecClassGenericPassword,
-      kSecAttrService: serviceName,
+      kSecAttrService: serviceName(),
       kSecAttrAccessible: accessibility.attribute,
-      kSecAttrAccount: account,
+      kSecAttrAccount: key,
     ]
     mutator?(&query)
     return query

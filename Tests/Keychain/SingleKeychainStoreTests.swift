@@ -6,17 +6,18 @@ import XCTest
 
 final class SingleKeychainStoreTests: XCTestCase {
   func testCreateStore() {
-    let serviceName = "test"
-    let account = UUID().uuidString
+    let identifier = UUID().uuidString
     let accessibility = KeychainAccessibility.afterFirstUnlock
     let store = createFreshUserStore(
-      serviceName: serviceName,
-      account: account,
+      identifier: identifier,
       accessibility: accessibility
     )
-    XCTAssertEqual(store.serviceName, serviceName)
-    XCTAssertEqual(store.account, account)
+    XCTAssertEqual(store.identifier, identifier)
     XCTAssertEqual(store.accessibility, accessibility)
+    XCTAssertEqual(
+      store.serviceName(),
+      "com.omaralbeik.stores.single.\(identifier)"
+    )
   }
 
   func testSaveObject() throws {
@@ -57,13 +58,11 @@ final class SingleKeychainStoreTests: XCTestCase {
 
 private extension SingleKeychainStoreTests {
   func createFreshUserStore(
-    serviceName: String = "com.omaralbeik.stores",
-    account: String = "user",
+    identifier: String = "user",
     accessibility: KeychainAccessibility = .whenUnlockedThisDeviceOnly
   ) -> SingleKeychainStore<User> {
     let store = SingleKeychainStore<User>.init(
-      serviceName: serviceName,
-      account: account,
+      identifier: identifier,
       accessibility: accessibility
     )
     XCTAssertNoThrow(try store.remove())
