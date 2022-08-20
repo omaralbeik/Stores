@@ -16,6 +16,7 @@ let package = Package(
     .library(name: "UserDefaultsStore", targets: ["UserDefaultsStore"]),
     .library(name: "FileSystemStore", targets: ["FileSystemStore"]),
     .library(name: "CoreDataStore", targets: ["CoreDataStore"]),
+    .library(name: "KeychainStore", targets: ["KeychainStore"]),
     .library(name: "StoresTestUtils", targets: ["TestUtils"]),
   ],
   targets: [
@@ -90,6 +91,22 @@ let package = Package(
         "TestUtils",
       ],
       path: "Tests/CoreData"
+    ),
+    // MARK: - Keychain
+    .target(
+      name: "KeychainStore",
+      dependencies: [
+        "Blueprints",
+      ],
+      path: "Sources/Keychain"
+    ),
+    .testTarget(
+      name: "KeychainStoreTests",
+      dependencies: [
+        "KeychainStore",
+        "TestUtils",
+      ],
+      path: "Tests/Keychain"
     ),
     // MARK: - TestUtils
     .target(
