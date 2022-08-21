@@ -5,6 +5,12 @@ import Foundation
 import XCTest
 
 final class SingleUserDefaultsStoreTests: XCTestCase {
+  private var store: SingleUserDefaultsStore<User>?
+
+  override func tearDown() {
+    store?.remove()
+  }
+
   func testCreateStore() {
     let identifier = UUID().uuidString
     let store = createFreshUserStore(identifier: identifier)
@@ -59,6 +65,7 @@ private extension SingleUserDefaultsStoreTests {
   ) -> SingleUserDefaultsStore<User> {
     let store = SingleUserDefaultsStore<User>(identifier: identifier)
     store.remove()
+    self.store = store
     return store
   }
 

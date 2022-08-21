@@ -5,6 +5,12 @@ import Foundation
 import XCTest
 
 final class SingleKeychainStoreTests: XCTestCase {
+  private var store: SingleKeychainStore<User>?
+
+  override func tearDownWithError() throws {
+    try store?.remove()
+  }
+
   func testCreateStore() {
     let identifier = UUID().uuidString
     let accessibility = KeychainAccessibility.afterFirstUnlock
@@ -66,6 +72,7 @@ private extension SingleKeychainStoreTests {
       accessibility: accessibility
     )
     XCTAssertNoThrow(try store.remove())
+    self.store = store
     return store
   }
 }

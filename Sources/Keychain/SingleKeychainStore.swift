@@ -10,6 +10,7 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
   let encoder = JSONEncoder()
   let decoder = JSONDecoder()
   let lock = NSRecursiveLock()
+  let logger = Logger()
   let key = "object"
 
   /// Store's unique identifier.
@@ -60,9 +61,24 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
       $0[kSecMatchLimit] = kSecMatchLimitOne
     }
     var result: AnyObject?
-    SecItemCopyMatching(query as CFDictionary, &result)
-    guard let data = result as? Data else { return nil }
-    return try? decoder.decode(Object.self, from: data)
+    let status = SecItemCopyMatching(query as CFDictionary, &result)
+    switch status {
+    case errSecSuccess:
+      break
+    default:
+      logger.log(KeychainError.keychain(status))
+      return nil
+    }
+    guard let data = result as? Data else {
+      logger.log(KeychainError.invalidResult)
+      return nil
+    }
+    do {
+      return try decoder.decode(Object.self, from: data)
+    } catch {
+      logger.log(error)
+      return nil
+    }
   }
 
   /// Removes any saved object in the store.
@@ -74,7 +90,7 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
       case errSecSuccess, errSecItemNotFound:
         return
       default:
-        throw KeychainError(status: status)
+        throw KeychainError.keychain(status)
       }
     }
   }
@@ -100,7 +116,7 @@ extension SingleKeychainStore {
     case errSecDuplicateItem:
       try update(data)
     default:
-      throw KeychainError(status: status)
+      throw KeychainError.keychain(status)
     }
   }
 
@@ -114,7 +130,7 @@ extension SingleKeychainStore {
     case errSecSuccess:
       return
     default:
-      throw KeychainError(status: status)
+      throw KeychainError.keychain(status)
     }
   }
 

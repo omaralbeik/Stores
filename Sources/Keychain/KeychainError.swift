@@ -1,5 +1,6 @@
 import Security
 
-struct KeychainError: Error {
-  let status: OSStatus
+enum KeychainError: Error {
+  case keychain(OSStatus)
+  case invalidResult
 }
