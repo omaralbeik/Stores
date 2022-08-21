@@ -239,6 +239,7 @@ You can add Stores to an Xcode project by adding it as a package dependency.
     - `UserDefaultsStore`: use User Defaults to persist data.
     - `FileSystemStore`: persist data by saving it to the file system.
     - `CoreDataStore`: use a Core Data database to persist data.
+    - `KeychainStore`: persist data securely in the Keychain.
     - `Blueprints`: add only the protocol, this is a good option if you do not want to use any of the provided stores and want to build yours.
     - `StoresTestUtils` to use the fakes in your tests target.
 
