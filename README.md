@@ -1,19 +1,35 @@
-# Stores
+# 🗂 Stores
 
 [![Stores](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml/badge.svg)](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/omaralbeik/Stores/branch/main/graph/badge.svg?token=iga0JA6Mwo)](https://codecov.io/gh/omaralbeik/Stores)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FStores%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/omaralbeik/Stores)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FStores%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/omaralbeik/Stores)
+[![License](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 
-A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, Keychain, and more in a few lines of code!
+A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, Keychain, and more with a few lines of code!
+
+## Features
+
+- [x] macOS Catalina+, iOS 13+, tvOS 13+, watchOS 6+.
+- [x] Store any `Codable` type.
+- [x] Single API with implementations using User Default, file system, Core Data, Keychain, and fakes for testing.
+- [x] Thread-safe implementations.
+- [x] Swappable implementations with a type-erased store.
+- [x] [Modular library](#installation), add all, or only what you need.
 
 ---
 
 ## Motivation
 
-I was working on an app that uses the [composable architecture](https://github.com/pointfreeco/swift-composable-architecture), and fall in love with how reducers use an environment type that holds any dependencies the feature needs, such as API clients, analytics clients, and more.
+When working on an app that uses the [composable architecture](https://github.com/pointfreeco/swift-composable-architecture), I fell in love with how reducers use an environment type that holds any dependencies the feature needs, such as API clients, analytics clients, and more.
 
-Stores tries to abstract the concept of a store and provide various implementations that can be injected in such environment and swapped easily when running tests or based on a remote flag.
+**Stores** tries to abstract the concept of a store and provide various implementations that can be injected in such environment and swapped easily when running tests or based on a remote flag.
+
+It all boils down to the two protocols [`SingleObjectStore`](https://github.com/omaralbeik/Stores/blob/main/Sources/Blueprints/SingleObjectStore.swift) and [`MultiObjectStore`](https://github.com/omaralbeik/Stores/blob/main/Sources/Blueprints/MultiObjectStore.swift) defined in the [**Blueprints**](https://github.com/omaralbeik/Stores/tree/main/Sources/Blueprints) layer, which provide the abstract concepts of stores that can store a single or multiple objects of a generic `Codable` type.
+
+The two protocols are then implemented in the different modules as explained in the chart below:
+
+![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores.png)
 
 ---
 
@@ -242,7 +258,7 @@ You can add Stores to an Xcode project by adding it as a package dependency.
     - `FileSystemStore`: persist data by saving it to the file system.
     - `CoreDataStore`: use a Core Data database to persist data.
     - `KeychainStore`: persist data securely in the Keychain.
-    - `Blueprints`: add only the protocol, this is a good option if you do not want to use any of the provided stores and want to build yours.
+    - `Blueprints`: protocols only, this is a good option if you do not want to use any of the provided stores and build yours.
     - `StoresTestUtils` to use the fakes in your tests target.
 
 ---
