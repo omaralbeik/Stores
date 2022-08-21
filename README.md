@@ -29,7 +29,8 @@ It all boils down to the two protocols [`SingleObjectStore`](https://github.com/
 
 The two protocols are then implemented in the different modules as explained in the chart below:
 
-![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores.png)
+![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores-light.png#gh-light-mode-only)
+![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores-dark.png#gh-dark-mode-only)
 
 ---
 
