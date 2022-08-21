@@ -6,6 +6,12 @@ import Foundation
 import XCTest
 
 final class MultiCoreDataStoreTests: XCTestCase {
+  private var store: MultiCoreDataStore<User>?
+
+  override func tearDownWithError() throws {
+    try store?.removeAll()
+  }
+
   func testSaveObject() throws {
     let store = createFreshUsersStore()
 
@@ -229,6 +235,7 @@ private extension MultiCoreDataStoreTests {
     let store = MultiCoreDataStore<User>(databaseName: databaseName)
     store.logger.printEnabled = false
     XCTAssertNoThrow(try store.removeAll())
+    self.store = store
     return store
   }
 }

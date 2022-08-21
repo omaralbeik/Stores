@@ -205,7 +205,7 @@ extension MultiCoreDataStore {
   }
 
   func key(for object: Object) -> String {
-    return "\(databaseName)-\(object.id)"
+    return key(for: object.id)
   }
 
   func key(for id: Object.ID) -> String {

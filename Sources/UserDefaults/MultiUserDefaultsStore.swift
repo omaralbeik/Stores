@@ -162,7 +162,7 @@ extension MultiUserDefaultsStore {
   }
 
   func key(for object: Object) -> String {
-    return "\(identifier)-\(object.id)"
+    return key(for: object.id)
   }
 
   func key(for id: Object.ID) -> String {

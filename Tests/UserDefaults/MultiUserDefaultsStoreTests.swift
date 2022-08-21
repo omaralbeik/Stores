@@ -5,6 +5,12 @@ import Foundation
 import XCTest
 
 final class MultiUserDefaultsStoreTests: XCTestCase {
+  private var store: MultiUserDefaultsStore<User>?
+
+  override func tearDown() {
+    store?.removeAll()
+  }
+
   func testCreateStore() {
     let identifier = UUID().uuidString
     let store = createFreshUsersStore(identifier: identifier)
@@ -169,7 +175,7 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
 
   func testThreadSafety() {
     let store = createFreshUsersStore()
-    let expectation1 = XCTestExpectation(description: "Store has 1000 items.")
+    let expectation1 = XCTestExpectation(description: "Store has 200 items.")
     for i in 0 ..< 200 {
       Thread.detachNewThread {
         let user = User(
@@ -209,6 +215,7 @@ private extension MultiUserDefaultsStoreTests {
   ) -> MultiUserDefaultsStore<User> {
     let store = MultiUserDefaultsStore<User>(identifier: identifier)
     store.removeAll()
+    self.store = store
     return store
   }
 

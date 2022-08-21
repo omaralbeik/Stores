@@ -1,77 +1,78 @@
 @testable import TestUtils
-@testable import UserDefaultsStore
+@testable import KeychainStore
 
 import Foundation
 import XCTest
 
-final class SingleUserDefaultsStoreTests: XCTestCase {
-  private var store: SingleUserDefaultsStore<User>?
+final class SingleKeychainStoreTests: XCTestCase {
+  private var store: SingleKeychainStore<User>?
 
-  override func tearDown() {
-    store?.remove()
+  override func tearDownWithError() throws {
+    try store?.remove()
   }
 
   func testCreateStore() {
     let identifier = UUID().uuidString
-    let store = createFreshUserStore(identifier: identifier)
+    let accessibility = KeychainAccessibility.afterFirstUnlock
+    let store = createFreshUserStore(
+      identifier: identifier,
+      accessibility: accessibility
+    )
     XCTAssertEqual(store.identifier, identifier)
+    XCTAssertEqual(store.accessibility, accessibility)
+    XCTAssertEqual(
+      store.serviceName(),
+      "com.omaralbeik.stores.single.\(identifier)"
+    )
   }
 
   func testSaveObject() throws {
     let store = createFreshUserStore()
     try store.save(.ahmad)
     XCTAssertEqual(store.object(), .ahmad)
-    XCTAssertEqual(userInStore(), .ahmad)
 
     let user: User? = .kareem
     try store.save(user)
     XCTAssertEqual(store.object(), .kareem)
-    XCTAssertEqual(userInStore(), .kareem)
 
     try store.save(nil)
     XCTAssertNil(store.object())
-    XCTAssertNil(userInStore())
   }
 
   func testSaveInvalidObject() {
     let store = createFreshUserStore()
     XCTAssertThrowsError(try store.save(User.invalid))
-    XCTAssertNil(userInStore())
   }
 
   func testObject() throws {
     let store = createFreshUserStore()
     XCTAssertNoThrow(try store.save(.dalia))
     XCTAssertEqual(store.object(), .dalia)
-    XCTAssertEqual(userInStore(), .dalia)
   }
 
-  func testRemove() {
+  func testRemove() throws {
     let store = createFreshUserStore()
     XCTAssertNoThrow(try store.save(.dalia))
     XCTAssertEqual(store.object(), .dalia)
 
-    store.remove()
+    try store.remove()
     XCTAssertNil(store.object())
-    XCTAssertNil(userInStore())
   }
 }
 
 // MARK: - Helpers
 
-private extension SingleUserDefaultsStoreTests {
+private extension SingleKeychainStoreTests {
   func createFreshUserStore(
-    identifier: String = "user"
-  ) -> SingleUserDefaultsStore<User> {
-    let store = SingleUserDefaultsStore<User>(identifier: identifier)
-    store.remove()
+    identifier: String = "user",
+    accessibility: KeychainAccessibility = .whenUnlockedThisDeviceOnly
+  ) -> SingleKeychainStore<User> {
+    let store = SingleKeychainStore<User>.init(
+      identifier: identifier,
+      accessibility: accessibility
+    )
+    XCTAssertNoThrow(try store.remove())
     self.store = store
     return store
-  }
-
-  func userInStore(identifier: String = "user") -> User? {
-    guard let data = UserDefaults(suiteName: identifier)?
-      .data(forKey: "object") else { return nil }
-    return try? JSONDecoder().decode(User.self, from: data)
   }
 }

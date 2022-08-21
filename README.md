@@ -3,7 +3,7 @@
 [![Stores](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml/badge.svg)](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/omaralbeik/Stores/branch/main/graph/badge.svg?token=iga0JA6Mwo)](https://codecov.io/gh/omaralbeik/Stores)
 
-A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, and more in a few lines of code!
+A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, Keychain, and more in a few lines of code!
 
 ---
 
@@ -86,6 +86,20 @@ let store = MultiCoreDataStore<User>(identifier: "users")
 
 // Store for a single object
 let store = SingleCoreDataStore<User>(identifier: "users")
+```
+</details>
+</li>
+
+<li>
+<details>
+<summary>Keychain</summary>
+
+```swift
+// Store for multiple objects
+let store = MultiKeychainStore<User>(identifier: "users")
+
+// Store for a single object
+let store = SingleKeychainStore<User>(identifier: "users")
 ```
 </details>
 </li>
@@ -234,6 +248,7 @@ You can add Stores to an Xcode project by adding it as a package dependency.
 
 - [Tom Harrington](https://twitter.com/atomicbird) for writing ["Core Data Using Only Code"](https://www.atomicbird.com/blog/core-data-code-only/).
 - [Keith Harrison](https://twitter.com/kharrison) for writing ["Testing Core Data In A Swift Package"](https://useyourloaf.com/blog/testing-core-data-in-a-swift-package/).
+- [Riccardo Cipolleschi](https://twitter.com/cipolleschir) for writing [Retrieve multiple values from Keychain](https://medium.com/macoclock/retrieve-multiple-values-from-keychain-77641248f4a1).
 ---
 
 ## License

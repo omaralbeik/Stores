@@ -6,6 +6,12 @@ import Foundation
 import XCTest
 
 final class SingleCoreDataStoreTests: XCTestCase {
+  private var store: SingleCoreDataStore<User>?
+
+  override func tearDownWithError() throws {
+    try store?.remove()
+  }
+
   func testCreateStore() {
     let databaseName = UUID().uuidString
     let store = createFreshUserStore(databaseName: databaseName)
@@ -66,6 +72,7 @@ private extension SingleCoreDataStoreTests {
     let store = SingleCoreDataStore<User>(databaseName: databaseName)
     store.logger.printEnabled = false
     XCTAssertNoThrow(try store.remove())
+    self.store = store
     return store
   }
 }
