@@ -11,3 +11,7 @@
 #if canImport(CoreDataStore)
 @_exported import CoreDataStore
 #endif
+
+#if canImport(KeychainStore)
+@_exported import KeychainStore
+#endif
