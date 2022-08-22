@@ -8,10 +8,10 @@
 @_exported import FileSystemStore
 #endif
 
-#if canImport(CoreDataStore)
+#if canImport(CoreData) && canImport(CoreDataStore)
 @_exported import CoreDataStore
 #endif
 
-#if canImport(KeychainStore)
+#if canImport(Security) && canImport(KeychainStore)
 @_exported import KeychainStore
 #endif

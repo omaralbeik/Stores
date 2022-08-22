@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 @testable import CoreDataStore
 
 import CoreData
@@ -28,3 +30,5 @@ final class DatabaseTests: XCTestCase {
     XCTAssertFalse(properties[2].isOptional)
   }
 }
+
+#endif

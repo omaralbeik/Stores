@@ -179,8 +179,8 @@ public final class MultiFileSystemStore<
 extension MultiFileSystemStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   func object(atPath path: String) throws -> Object? {

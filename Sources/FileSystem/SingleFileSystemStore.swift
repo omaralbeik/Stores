@@ -85,8 +85,8 @@ public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {
 extension SingleFileSystemStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   func storeURL() throws -> URL {

@@ -1,3 +1,5 @@
+#if canImport(Security)
+
 @testable import TestUtils
 @testable import KeychainStore
 
@@ -216,3 +218,5 @@ private extension MultiKeychainStoreTests {
     return store
   }
 }
+
+#endif

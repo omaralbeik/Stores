@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 import CoreData
 import Foundation
 
@@ -7,3 +9,5 @@ final class Entity: NSManagedObject {
   @NSManaged var data: Data?
   @NSManaged var lastUpdated: Date?
 }
+
+#endif

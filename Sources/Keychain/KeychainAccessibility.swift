@@ -1,4 +1,6 @@
-import Foundation
+#if canImport(Security)
+
+import Security
 
 /// An object representing keychain accessibility level.
 public struct KeychainAccessibility: Equatable {
@@ -32,3 +34,5 @@ public struct KeychainAccessibility: Equatable {
     attribute: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
   )
 }
+
+#endif

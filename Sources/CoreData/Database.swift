@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 import CoreData
 import Foundation
 
@@ -65,3 +67,5 @@ final class Database {
     return request
   }
 }
+
+#endif
