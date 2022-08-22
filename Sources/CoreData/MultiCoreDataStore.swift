@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 import Blueprints
 import CoreData
 import Foundation
@@ -200,8 +202,8 @@ public final class MultiCoreDataStore<
 extension MultiCoreDataStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   func key(for object: Object) -> String {
@@ -212,3 +214,5 @@ extension MultiCoreDataStore {
     return "\(databaseName)-\(id)"
   }
 }
+
+#endif

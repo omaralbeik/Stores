@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 import Blueprints
 import CoreData
 import Foundation
@@ -40,18 +42,20 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   /// - Parameter object: object to be saved.
   /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
-    let data = try encoder.encode(object)
-    let request = database.entitiesFetchRequest()
-    if let savedEntity = try database.context.fetch(request).first {
-      savedEntity.data = data
-      savedEntity.lastUpdated = Date()
-    } else {
-      let newEntity = Entity(context: database.context)
-      newEntity.id = key
-      newEntity.data = data
-      newEntity.lastUpdated = Date()
+    try sync {
+      let data = try encoder.encode(object)
+      let request = database.entitiesFetchRequest()
+      if let savedEntity = try database.context.fetch(request).first {
+        savedEntity.data = data
+        savedEntity.lastUpdated = Date()
+      } else {
+        let newEntity = Entity(context: database.context)
+        newEntity.id = key
+        newEntity.data = data
+        newEntity.lastUpdated = Date()
+      }
+      try database.context.save()
     }
-    try database.context.save()
   }
 
   /// Returns the object saved in the store.
@@ -76,11 +80,23 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   /// Removes any saved object in the store.
   /// - Throws error: any error that might occur during the removal operation.
   public func remove() throws {
-    let request = database.entitiesFetchRequest()
-    let entities = try database.context.fetch(request)
-    for entity in entities {
-      database.context.delete(entity)
+    try sync {
+      let request = database.entitiesFetchRequest()
+      let entities = try database.context.fetch(request)
+      for entity in entities {
+        database.context.delete(entity)
+      }
+      try database.context.save()
     }
-    try database.context.save()
   }
 }
+
+extension SingleCoreDataStore {
+  func sync(action: () throws -> Void) rethrows {
+    lock.lock()
+    defer { lock.unlock() }
+    try action()
+  }
+}
+
+#endif

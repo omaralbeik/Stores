@@ -1,3 +1,5 @@
+#if canImport(Security)
+
 import Foundation
 
 final class Logger {
@@ -30,3 +32,5 @@ final class Logger {
     return message
   }
 }
+
+#endif

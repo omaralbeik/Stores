@@ -75,7 +75,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 extension SingleUserDefaultsStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 }

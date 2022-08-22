@@ -1,3 +1,5 @@
+#if canImport(Security)
+
 import Blueprints
 import Foundation
 import Security
@@ -101,8 +103,8 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
 extension SingleKeychainStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   typealias Query = Dictionary<CFString, Any>
@@ -149,3 +151,5 @@ extension SingleKeychainStore {
     return query
   }
 }
+
+#endif

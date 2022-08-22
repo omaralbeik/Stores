@@ -141,8 +141,8 @@ public final class MultiUserDefaultsStore<
 extension MultiUserDefaultsStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   func increaseCounter() {

@@ -1,3 +1,5 @@
+#if canImport(CoreData)
+
 @testable import CoreDataStore
 @testable import TestUtils
 
@@ -239,3 +241,5 @@ private extension MultiCoreDataStoreTests {
     return store
   }
 }
+
+#endif

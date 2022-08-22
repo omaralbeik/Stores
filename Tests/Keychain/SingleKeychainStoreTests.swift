@@ -1,3 +1,5 @@
+#if canImport(Security)
+
 @testable import TestUtils
 @testable import KeychainStore
 
@@ -76,3 +78,5 @@ private extension SingleKeychainStoreTests {
     return store
   }
 }
+
+#endif

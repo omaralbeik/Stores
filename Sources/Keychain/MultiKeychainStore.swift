@@ -1,5 +1,8 @@
+#if canImport(Security)
+
 import Blueprints
 import Foundation
+import Security
 
 /// The multi object Keychain store offers a convenient and type-safe way to store and retrieve a collection
 /// of `Codable` and `Identifiable` objects securely in the keychain.
@@ -197,8 +200,8 @@ public final class MultiKeychainStore<
 extension MultiKeychainStore {
   func sync(action: () throws -> Void) rethrows {
     lock.lock()
+    defer { lock.unlock() }
     try action()
-    lock.unlock()
   }
 
   func serviceName() -> String {
@@ -290,3 +293,5 @@ extension MultiKeychainStore {
     }
   }
 }
+
+#endif
