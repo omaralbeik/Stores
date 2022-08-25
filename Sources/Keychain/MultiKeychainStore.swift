@@ -48,7 +48,7 @@ public final class MultiKeychainStore<
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
     try sync {
       let data = try encoder.encode(object)
@@ -58,7 +58,7 @@ public final class MultiKeychainStore<
 
   /// Saves an array of objects to store.
   /// - Parameter objects: array of objects to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ objects: [Object]) throws {
     try sync {
       let pairs = try objects.map { (try encoder.encode($0), $0.id) }
@@ -67,6 +67,9 @@ public final class MultiKeychainStore<
   }
 
   /// The number of all objects stored in store.
+  ///
+  /// > Note: Errors thrown while performing the security query will be ignored and logged out to console
+  /// in DEBUG.
   public var objectsCount: Int {
     let query = generateQuery {
       $0[kSecMatchLimit] = kSecMatchLimitAll
@@ -90,6 +93,10 @@ public final class MultiKeychainStore<
   }
 
   /// Wether the store contains a saved object with the given id.
+  ///
+  /// > Note: Errors thrown while performing the security query will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Parameter id: object id.
   /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
@@ -109,6 +116,10 @@ public final class MultiKeychainStore<
   }
 
   /// Returns an object for the given id, or `nil` if no object is found.
+  ///
+  /// > Note: Errors thrown while performing the security query will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Parameter id: object id.
   /// - Returns: object with the given id, or`nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
@@ -131,6 +142,10 @@ public final class MultiKeychainStore<
   }
 
   /// Returns all objects in the store.
+  ///
+  /// > Note: Errors thrown while performing the security query will be ignored and logged out to console
+  /// in DEBUG.
+  ///
   /// - Returns: collection containing all objects stored in store.
   public func allObjects() -> [Object] {
     let query = generateQuery {

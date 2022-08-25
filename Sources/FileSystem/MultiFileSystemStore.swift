@@ -46,7 +46,7 @@ public final class MultiFileSystemStore<
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
     try sync {
       _ = try storeURL().path
@@ -58,7 +58,7 @@ public final class MultiFileSystemStore<
 
   /// Saves an array of objects to store.
   /// - Parameter objects: array of objects to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ objects: [Object]) throws {
     try sync {
       let pairs = try objects.map { object -> (url: URL, data: Data) in

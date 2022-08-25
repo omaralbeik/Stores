@@ -1,4 +1,4 @@
-/// A type erased `SingleObjectStore`
+/// A type erased `SingleObjectStore`.
 public final class AnySingleObjectStore<Object: Codable>: SingleObjectStore {
   /// Create any store from a given store.
   /// - Parameter store: store to erase its type.

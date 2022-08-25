@@ -1,4 +1,4 @@
-/// A type erased `MultiObjectStore`
+/// A type erased `MultiObjectStore`.
 public final class AnyMultiObjectStore<
   Object: Codable & Identifiable
 >: MultiObjectStore {

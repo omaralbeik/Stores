@@ -26,8 +26,11 @@ public final class SingleObjectStoreFake<Object: Codable>: SingleObjectStore {
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
+    if let error = error {
+      throw error
+    }
     underlyingObject = object
   }
 
@@ -38,7 +41,11 @@ public final class SingleObjectStoreFake<Object: Codable>: SingleObjectStore {
   }
 
   /// Removes any saved object in the store.
-  public func remove() {
+  /// - Throws error: any error that might occur during the removal operation.
+  public func remove() throws {
+    if let error = error {
+      throw error
+    }
     underlyingObject = nil
   }
 }
