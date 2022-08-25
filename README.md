@@ -2,8 +2,8 @@
 
 [![Stores](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml/badge.svg)](https://github.com/omaralbeik/Stores/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/omaralbeik/Stores/branch/main/graph/badge.svg?token=iga0JA6Mwo)](https://codecov.io/gh/omaralbeik/Stores)
-[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FStores%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/omaralbeik/Stores)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FStores%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/omaralbeik/Stores)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fomaralbeik%2FStores%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/omaralbeik/Stores)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](https://opensource.org/licenses/MIT)
 
 A typed key-value storage solution to store `Codable` types in various persistence layers like User Defaults, File System, Core Data, Keychain, and more with a few lines of code!
