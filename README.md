@@ -10,7 +10,7 @@ A typed key-value storage solution to store `Codable` types in various persisten
 
 ## Features
 
-- [x] macOS Catalina+, iOS 13+, tvOS 13+, watchOS 6+.
+- [x] macOS Catalina+, iOS 13+, tvOS 13+, watchOS 6+, any Linux supporting Swift 5.4+.
 - [x] Store any `Codable` type.
 - [x] Single API with implementations using User Default, file system, Core Data, Keychain, and fakes for testing.
 - [x] Thread-safe implementations.

@@ -46,7 +46,7 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
     try sync {
       let data = try encoder.encode(object)

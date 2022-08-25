@@ -25,7 +25,7 @@ public final class MultiObjectStoreFake<
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
-  /// - Throws error: any encoding errors.
+  /// - Throws error: any error that might occur during the save operation.
   public func save(_ object: Object) throws {
     if let error = error {
       throw error
@@ -58,12 +58,20 @@ public final class MultiObjectStoreFake<
 
   /// Removes object with the given id —if found—.
   /// - Parameter id: id for the object to be deleted.
-  public func remove(withId id: Object.ID) {
+  /// - Throws error: any error that might occur during the removal operation.
+  public func remove(withId id: Object.ID) throws {
+    if let error = error {
+      throw error
+    }
     dictionary[id] = nil
   }
 
   /// Removes all objects in store.
-  public func removeAll() {
+  /// - Throws error: any error that might occur during the removal operation.
+  public func removeAll() throws {
+    if let error = error {
+      throw error
+    }
     dictionary = [:]
   }
 }
