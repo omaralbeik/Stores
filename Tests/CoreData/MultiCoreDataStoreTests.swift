@@ -1,5 +1,6 @@
 #if canImport(CoreData)
 
+@testable import Blueprints
 @testable import CoreDataStore
 @testable import TestUtils
 
@@ -59,6 +60,17 @@ final class MultiCoreDataStoreTests: XCTestCase {
     XCTAssertEqual(store.allObjects(), [])
   }
 
+  func testObjectsCountLogging() throws {
+    let store = createFreshUsersStore()
+    store.logger.error = StoresError.invalid
+    let count = store.objectsCount
+    XCTAssertEqual(count, 0)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      "An error occurred in `MultiCoreDataStore.objectsCount`. Error: Invalid."
+    )
+  }
+
   func testObject() {
     let store = createFreshUsersStore()
 
@@ -112,6 +124,15 @@ final class MultiCoreDataStoreTests: XCTestCase {
 
   func testAllObjectsLogging() throws {
     let store = createFreshUsersStore()
+
+    store.logger.error = StoresError.invalid
+    XCTAssert(store.allObjects().isEmpty)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      "An error occurred in `MultiCoreDataStore.allObjects()`. Error: Invalid."
+    )
+    store.logger.error = nil
+
     try store.save([.ahmad, .dalia, .kareem])
 
     let request = store.database.entityFetchRequest(store.key(for: .dalia))
@@ -175,6 +196,19 @@ final class MultiCoreDataStoreTests: XCTestCase {
     XCTAssert(store.containsObject(withId: User.ahmad.id))
   }
 
+  func testContainsObjectLogging() throws {
+    let store = createFreshUsersStore()
+    store.logger.error = StoresError.invalid
+    XCTAssertFalse(store.containsObject(withId: 10))
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiCoreDataStore.containsObject(withId:)`. \
+      Error: Invalid.
+      """
+    )
+  }
+
   func testUpdatingSameObjectDoesNotChangeCount() throws {
     let store = createFreshUsersStore()
 
@@ -235,7 +269,6 @@ private extension MultiCoreDataStoreTests {
     databaseName: String = "users"
   ) -> MultiCoreDataStore<User> {
     let store = MultiCoreDataStore<User>(databaseName: databaseName)
-    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.removeAll())
     self.store = store
     return store

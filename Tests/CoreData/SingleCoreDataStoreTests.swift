@@ -72,7 +72,6 @@ private extension SingleCoreDataStoreTests {
     databaseName: String = "user"
   ) -> SingleCoreDataStore<User> {
     let store = SingleCoreDataStore<User>(databaseName: databaseName)
-    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.remove())
     self.store = store
     return store

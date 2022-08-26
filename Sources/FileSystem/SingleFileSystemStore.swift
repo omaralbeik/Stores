@@ -1,8 +1,9 @@
 import Blueprints
 import Foundation
 
-/// The single file system object store offers a convenient and type-safe way to store and retrieve a single
-/// `Codable` object by saving it as a json file using the file system.
+/// The single file system object store is an implementation of ``SingleObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a single `Codable` object by saving it as a json file
+/// using the file system.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class SingleFileSystemStore<Object: Codable>: SingleObjectStore {

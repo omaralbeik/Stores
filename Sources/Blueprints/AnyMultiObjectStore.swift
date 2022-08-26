@@ -1,4 +1,4 @@
-/// A type erased `MultiObjectStore`.
+/// A type-erased ``MultiObjectStore``.
 public final class AnyMultiObjectStore<
   Object: Codable & Identifiable
 >: MultiObjectStore {
@@ -109,7 +109,7 @@ public final class AnyMultiObjectStore<
 
 public extension MultiObjectStore {
   /// Create a type erased store.
-  /// - Returns: `AnyMultiObjectStore`.
+  /// - Returns: ``AnyMultiObjectStore``.
   func eraseToAnyStore() -> AnyMultiObjectStore<Object> {
     return .init(self)
   }
