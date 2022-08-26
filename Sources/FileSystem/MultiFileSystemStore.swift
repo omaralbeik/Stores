@@ -1,8 +1,9 @@
 import Blueprints
 import Foundation
 
-/// The multi object file system store offers a convenient and type-safe way to store and retrieve a collection
-/// of `Codable` and `Identifiable` objects as json files using the file system.
+/// The multi object file system store is an implementation of ``MultiObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
+/// objects as json files using the file system.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class MultiFileSystemStore<
@@ -78,11 +79,13 @@ public final class MultiFileSystemStore<
   /// in DEBUG.
   public var objectsCount: Int {
     do {
-      let storeURL = try storeURL()
-      let items = try manager.contentsOfDirectory(
-        at: storeURL,
-        includingPropertiesForKeys: nil,
-        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]
+      let storeURL = try logger.perform(storeURL())
+      let items = try logger.perform(
+        manager.contentsOfDirectory(
+          at: storeURL,
+          includingPropertiesForKeys: nil,
+          options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]
+        )
       )
       return items.count
     } catch {
@@ -100,7 +103,7 @@ public final class MultiFileSystemStore<
   /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
     do {
-      let path = try url(forObjectWithId: id).path
+      let path = try logger.perform(url(forObjectWithId: id).path)
       return manager.fileExists(atPath: path)
     } catch {
       logger.log(error)
@@ -134,18 +137,20 @@ public final class MultiFileSystemStore<
   /// - Returns: collection containing all objects stored in store.
   public func allObjects() -> [Object] {
     do {
-      let storePath = try storeURL().path
-      return try manager.contentsOfDirectory(atPath: storePath)
-        .compactMap(url(forObjectPath:))
-        .map(\.path)
-        .compactMap {
-          do {
-            return try object(atPath: $0)
-          } catch {
-            logger.log(error)
-            return nil
+      let storePath = try logger.perform(storeURL().path)
+      return try logger.perform(
+        manager.contentsOfDirectory(atPath: storePath)
+          .compactMap(url(forObjectPath:))
+          .map(\.path)
+          .compactMap {
+            do {
+              return try logger.perform(object(atPath: $0))
+            } catch {
+              logger.log(error)
+              return nil
+            }
           }
-        }
+      )
     } catch {
       logger.log(error)
       return []

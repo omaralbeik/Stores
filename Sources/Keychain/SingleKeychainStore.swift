@@ -4,8 +4,8 @@ import Blueprints
 import Foundation
 import Security
 
-/// The single Keychain object store offers a convenient and type-safe way to store and retrieve a single
-/// `Codable` object securely in the keychain.
+/// The single keychain object store is an implementation of ``SingleObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a single `Codable` object securely in the keychain.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {

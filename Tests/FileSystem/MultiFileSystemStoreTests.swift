@@ -1,3 +1,4 @@
+@testable import Blueprints
 @testable import FileSystemStore
 @testable import TestUtils
 
@@ -84,6 +85,19 @@ final class MultiFileSystemStoreTests: XCTestCase {
     XCTAssert(try allUsers().isEmpty)
   }
 
+  func testObjectsCountLogging() throws {
+    let store = createFreshUsersStore()
+    store.logger.error = StoresError.invalid
+    XCTAssertEqual(store.objectsCount, 0)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiFileSystemStore.objectsCount`. \
+      Error: Invalid.
+      """
+    )
+  }
+
   func testObject() throws {
     let store = createFreshUsersStore()
 
@@ -125,6 +139,18 @@ final class MultiFileSystemStoreTests: XCTestCase {
 
   func testAllObjectsLogging() throws {
     let store = createFreshUsersStore()
+
+    store.logger.error = StoresError.invalid
+    XCTAssert(store.allObjects().isEmpty)
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiFileSystemStore.allObjects()`. \
+      Error: Invalid.
+      """
+    )
+    store.logger.error = nil
+
     try store.save([.ahmad, .dalia, .kareem])
     let url = try url(forUser: .dalia)
     let data = "{]".data(using: .utf8)!
@@ -207,6 +233,20 @@ final class MultiFileSystemStoreTests: XCTestCase {
     try store.save(.ahmad)
     XCTAssert(store.containsObject(withId: User.ahmad.id))
   }
+
+  func testContainsObjectLogging() throws {
+    let store = createFreshUsersStore()
+    store.logger.error = StoresError.invalid
+    XCTAssertFalse(store.containsObject(withId: 10))
+    XCTAssertEqual(
+      store.logger.lastOutput,
+      """
+      An error occurred in `MultiFileSystemStore.containsObject(withId:)`. \
+      Error: Invalid.
+      """
+    )
+  }
+
 
   func testUpdatingSameObjectDoesNotChangeCount() throws {
     let store = createFreshUsersStore()
@@ -321,7 +361,6 @@ private extension MultiFileSystemStoreTests {
       identifier: identifier,
       directory: directory
     )
-    store.logger.printEnabled = false
     XCTAssertNoThrow(try store.removeAll())
     self.store = store
     return store

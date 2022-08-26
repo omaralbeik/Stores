@@ -4,8 +4,9 @@ import Blueprints
 import Foundation
 import Security
 
-/// The multi object Keychain store offers a convenient and type-safe way to store and retrieve a collection
-/// of `Codable` and `Identifiable` objects securely in the keychain.
+/// The multi object keychain store is an implementation of ``MultiObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
+/// objects securely in the keychain.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class MultiKeychainStore<

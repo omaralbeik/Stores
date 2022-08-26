@@ -4,8 +4,9 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// The single Core Data object store offers a convenient and type-safe way to store and retrieve a single
-/// `Codable` object by saving it in a Core Data database.
+/// The single core data object store is an implementation of ``SingleObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a single `Codable` object by saving it in a core data
+/// database.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {

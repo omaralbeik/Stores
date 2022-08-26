@@ -4,8 +4,9 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// The multi object Core Data store offers a convenient and type-safe way to store and retrieve a collection
-/// of `Codable` and `Identifiable` objects to a Core Data database.
+/// The multi object core data store is an implementation of ``MultiObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
+/// objects in a core data database.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class MultiCoreDataStore<
@@ -93,7 +94,8 @@ public final class MultiCoreDataStore<
   public var objectsCount: Int {
     let request = database.entitiesFetchRequest()
     do {
-      return try database.context.count(for: request)
+      let count = try logger.perform(database.context.count(for: request))
+      return count
     } catch {
       logger.log(error)
       return 0
@@ -111,7 +113,7 @@ public final class MultiCoreDataStore<
     let key = key(for: id)
     let request = database.entityFetchRequest(key)
     do {
-      let count = try database.context.count(for: request)
+      let count = try logger.perform(database.context.count(for: request))
       return count != 0
     } catch {
       logger.log(error)
@@ -148,16 +150,18 @@ public final class MultiCoreDataStore<
   public func allObjects() -> [Object] {
     let request = database.entitiesFetchRequest()
     do {
-      return try database.context.fetch(request)
-        .compactMap(\.data)
-        .compactMap {
-          do {
-            return try decoder.decode(Object.self, from: $0)
-          } catch {
-            logger.log(error)
-            return nil
+      return try logger.perform(
+        database.context.fetch(request)
+          .compactMap(\.data)
+          .compactMap {
+            do {
+              return try decoder.decode(Object.self, from: $0)
+            } catch {
+              logger.log(error)
+              return nil
+            }
           }
-        }
+      )
     } catch {
       logger.log(error)
       return []

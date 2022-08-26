@@ -1,8 +1,9 @@
 import Blueprints
 import Foundation
 
-/// The multi object UserDefaults store offers a convenient and type-safe way to store and retrieve a collection
-/// of `Codable` and `Identifiable` objects to UserDefaults.
+/// The multi object user defaults store is an implementation of ``MultiObjectStore`` that offers a
+/// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
+/// objects in a user defaults suite.
 ///
 /// > Thread safety: This is a thread-safe class.
 public final class MultiUserDefaultsStore<
