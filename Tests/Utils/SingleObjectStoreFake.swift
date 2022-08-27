@@ -22,7 +22,7 @@ public final class SingleObjectStoreFake<Object: Codable>: SingleObjectStore {
     self.error = error
   }
 
-  // MARK: - Store
+  // MARK: - SingleObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.

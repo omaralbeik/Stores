@@ -42,6 +42,7 @@ private extension AnySingleObjectStoreTests {
   func createFreshUserStores() -> Stores {
     let fakeStore = SingleObjectStoreFake<User>()
     let anyStore = fakeStore.eraseToAnyStore()
+    XCTAssert(anyStore.eraseToAnyStore() === anyStore)
     return (fakeStore, anyStore)
   }
 }

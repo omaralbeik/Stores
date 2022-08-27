@@ -94,6 +94,7 @@ private extension AnyMultiObjectStoreTests {
   func createFreshUsersStores() -> Stores {
     let fakeStore = MultiObjectStoreFake<User>()
     let anyStore = fakeStore.eraseToAnyStore()
+    XCTAssert(anyStore.eraseToAnyStore() === anyStore)
     return (fakeStore, anyStore)
   }
 }

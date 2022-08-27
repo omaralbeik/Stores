@@ -47,6 +47,9 @@ public extension SingleObjectStore {
   /// Create a type erased store.
   /// - Returns: ``AnySingleObjectStore``.
   func eraseToAnyStore() -> AnySingleObjectStore<Object> {
+    if let anyStore = self as? AnySingleObjectStore<Object> {
+      return anyStore
+    }
     return .init(self)
   }
 }

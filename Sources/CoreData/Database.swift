@@ -11,17 +11,19 @@ private final class Container: NSPersistentContainer {
 
 final class Database {
   let context: NSManagedObjectContext
+  private(set) var url: URL?
 
   init(name: String) {
     let container = Container(name: name, managedObjectModel: Self.entityModel)
-    container.loadPersistentStores { _, error in
+    context = container.viewContext
+    container.loadPersistentStores { description, error in
       if let error = error {
         preconditionFailure(
           "Failed to load store with error: \(error.localizedDescription)."
         )
       }
+      self.url = description.url
     }
-    context = container.viewContext
   }
 
   static let entityModel: NSManagedObjectModel = {
@@ -64,6 +66,7 @@ final class Database {
   let entityFetchRequest: (String) -> NSFetchRequest<Entity> = { id in
     let request = NSFetchRequest<Entity>(entityName: "Entity")
     request.predicate = NSPredicate(format: "id == %@", id)
+    request.fetchLimit = 1
     return request
   }
 }
