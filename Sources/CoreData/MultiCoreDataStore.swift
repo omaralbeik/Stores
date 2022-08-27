@@ -38,6 +38,11 @@ public final class MultiCoreDataStore<
     database = .init(name: databaseName)
   }
 
+  /// URL for where the core data SQLite database is stored.
+  public var databaseURL: URL? {
+    database.url
+  }
+
   // MARK: - MultiObjectStore
 
   /// Saves an object to store.

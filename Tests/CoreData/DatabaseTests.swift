@@ -17,17 +17,41 @@ final class DatabaseTests: XCTestCase {
     }
     XCTAssertEqual(properties.count, 3)
 
-    XCTAssertEqual(properties[0].name, "id")
-    XCTAssertEqual(properties[0].attributeType, .stringAttributeType)
-    XCTAssertFalse(properties[0].isOptional)
+    let sortedProperties = properties.sorted { $0.name < $1.name }
 
-    XCTAssertEqual(properties[1].name, "data")
-    XCTAssertEqual(properties[1].attributeType, .binaryDataAttributeType)
-    XCTAssertFalse(properties[1].isOptional)
+    XCTAssertEqual(sortedProperties[0].name, "data")
+    XCTAssertEqual(sortedProperties[0].attributeType, .binaryDataAttributeType)
+    XCTAssertFalse(sortedProperties[0].isOptional)
 
-    XCTAssertEqual(properties[2].name, "lastUpdated")
-    XCTAssertEqual(properties[2].attributeType, .dateAttributeType)
-    XCTAssertFalse(properties[2].isOptional)
+    XCTAssertEqual(sortedProperties[1].name, "id")
+    XCTAssertEqual(sortedProperties[1].attributeType, .stringAttributeType)
+    XCTAssertFalse(sortedProperties[1].isOptional)
+
+    XCTAssertEqual(sortedProperties[2].name, "lastUpdated")
+    XCTAssertEqual(sortedProperties[2].attributeType, .dateAttributeType)
+    XCTAssertFalse(sortedProperties[2].isOptional)
+  }
+
+  func testEntitiesFetchRequest() {
+    let database = Database(name: "test")
+    let request = database.entitiesFetchRequest()
+    XCTAssertEqual(request.entityName, "Entity")
+    XCTAssertEqual(
+      request.sortDescriptors,
+      [.init(key: "lastUpdated", ascending: true)]
+    )
+  }
+
+  func testEntityFetchRequest() {
+    let database = Database(name: "test")
+    let id = "test-id"
+    let request = database.entityFetchRequest(id)
+    XCTAssertEqual(request.entityName, "Entity")
+    XCTAssertEqual(
+      request.predicate,
+      NSPredicate(format: "id == %@", id)
+    )
+    XCTAssertEqual(request.fetchLimit, 1)
   }
 }
 

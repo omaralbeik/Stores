@@ -15,9 +15,20 @@ final class MultiCoreDataStoreTests: XCTestCase {
     try store?.removeAll()
   }
 
+  func testCreateStore() {
+    let databaseName = UUID().uuidString
+    let store = createFreshUsersStore(databaseName: databaseName)
+    XCTAssertEqual(store.databaseName, databaseName)
+  }
+
+  func testDatabaseURL() {
+    let store = createFreshUsersStore()
+    let path = store.databaseURL?.pathComponents.suffix(2)
+    XCTAssertEqual(path, ["CoreDataStore", "\(store.databaseName).sqlite"])
+  }
+
   func testSaveObject() throws {
     let store = createFreshUsersStore()
-
     try store.save(.ahmad)
     XCTAssertEqual(store.objectsCount, 1)
     XCTAssertEqual(store.allObjects(), [.ahmad])

@@ -21,7 +21,7 @@ public final class MultiObjectStoreFake<
     self.error = error
   }
 
-  // MARK: - Store
+  // MARK: - MultiObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.

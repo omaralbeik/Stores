@@ -111,6 +111,9 @@ public extension MultiObjectStore {
   /// Create a type erased store.
   /// - Returns: ``AnyMultiObjectStore``.
   func eraseToAnyStore() -> AnyMultiObjectStore<Object> {
+    if let anyStore = self as? AnyMultiObjectStore<Object> {
+      return anyStore
+    }
     return .init(self)
   }
 }

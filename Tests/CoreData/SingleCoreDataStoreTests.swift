@@ -20,6 +20,12 @@ final class SingleCoreDataStoreTests: XCTestCase {
     XCTAssertEqual(store.databaseName, databaseName)
   }
 
+  func testDatabaseURL() {
+    let store = createFreshUserStore()
+    let path = store.databaseURL?.pathComponents.suffix(2)
+    XCTAssertEqual(path, ["CoreDataStore", "\(store.databaseName).sqlite"])
+  }
+
   func testSaveObject() throws {
     let store = createFreshUserStore()
     try store.save(.ahmad)

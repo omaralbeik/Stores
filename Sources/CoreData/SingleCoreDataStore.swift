@@ -37,7 +37,12 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
     database = .init(name: databaseName)
   }
 
-  // MARK: - Store
+  /// URL for where the core data SQLite database is stored.
+  public var databaseURL: URL? {
+    database.url
+  }
+
+  // MARK: - SingleObjectStore
 
   /// Saves an object to store.
   /// - Parameter object: object to be saved.
