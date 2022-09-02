@@ -153,7 +153,7 @@ final class MultiRealmStore<Object: Codable & Identifiable>: MultiObjectStore {
 }
 
 // Store for a single object
-final class SingleRealmStore<Object: Codable & Identifiable>: SingleObjectStore {
+final class SingleRealmStore<Object: Codable>: SingleObjectStore {
     // ...
 }
 ```
@@ -171,7 +171,7 @@ final class MultiSQLiteStore<Object: Codable & Identifiable>: MultiObjectStore {
 }
 
 // Store for a single object
-final class SingleSQLiteStore<Object: Codable & Identifiable>: SingleObjectStore {
+final class SingleSQLiteStore<Object: Codable>: SingleObjectStore {
     // ...
 }
 ```
