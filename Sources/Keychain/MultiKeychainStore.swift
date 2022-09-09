@@ -122,7 +122,7 @@ public final class MultiKeychainStore<
   /// in DEBUG.
   ///
   /// - Parameter id: object id.
-  /// - Returns: object with the given id, or`nil` if no object with the given id is found.
+  /// - Returns: object with the given id, or `nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
     let query = generateQuery(id: id) {
       $0[kSecReturnData] = kCFBooleanTrue

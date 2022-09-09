@@ -67,7 +67,7 @@ public final class AnyMultiObjectStore<
 
   /// Returns an object for the given id, or `nil` if no object is found.
   /// - Parameter id: object id.
-  /// - Returns: object with the given id, or`nil` if no object with the given id is found.
+  /// - Returns: object with the given id, or `nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
     return _object(id)
   }
