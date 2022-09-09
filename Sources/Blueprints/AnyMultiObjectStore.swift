@@ -53,12 +53,12 @@ public final class AnyMultiObjectStore<
     try _saveObjects(objects)
   }
 
-  /// The number of all objects stored in store.
+  /// The number of all objects stored in the store.
   public var objectsCount: Int {
     return _objectsCount()
   }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   /// - Parameter id: object id.
   /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {

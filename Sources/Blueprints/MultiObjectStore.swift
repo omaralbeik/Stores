@@ -24,24 +24,24 @@ public protocol MultiObjectStore {
   /// The number of all objects stored in store.
   var objectsCount: Int { get }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   /// - Parameter id: object id.
   /// - Returns: true if store contains an object with the given id.
   func containsObject(withId id: Object.ID) -> Bool
 
   /// Returns an object for the given id, or `nil` if no object is found.
   /// - Parameter id: object id.
-  /// - Returns: object with the given id, or`nil` if no object with the given id is found.
+  /// - Returns: object with the given id, or `nil` if no object with the given id is found.
   func object(withId id: Object.ID) -> Object?
 
-  /// Returns objects for given ids, and ignores any ids that does not represent an object in the store.
+  /// Returns objects for given ids, and ignores any id that does not represent an object in the store.
   /// **This method has a default implementation.**
   /// - Parameter ids: object ids.
   /// - Returns: array of objects with the given ids.
   func objects(withIds ids: [Object.ID]) -> [Object]
 
   /// Returns all objects in the store.
-  /// - Returns: collection containing all objects stored in store without a given order.
+  /// - Returns: collection containing all objects stored in the store without a given order.
   func allObjects() -> [Object]
 
   /// Removes object with the given id —if found—.

@@ -93,7 +93,7 @@ public final class MultiKeychainStore<
     return array.count
   }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   ///
   /// > Note: Errors thrown while performing the security query will be ignored and logged out to console
   /// in DEBUG.

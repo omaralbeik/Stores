@@ -94,7 +94,7 @@ public final class MultiFileSystemStore<
     }
   }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   ///
   /// > Note: Errors thrown out by file manager during reading files will be ignored and logged out to console
   /// in DEBUG.
