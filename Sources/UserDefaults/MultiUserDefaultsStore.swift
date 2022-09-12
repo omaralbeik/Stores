@@ -84,7 +84,7 @@ public final class MultiUserDefaultsStore<
     return store.integer(forKey: counterKey)
   }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   /// - Parameter id: object id.
   /// - Returns: true if store contains an object with the given id.
   public func containsObject(withId id: Object.ID) -> Bool {
@@ -93,7 +93,7 @@ public final class MultiUserDefaultsStore<
 
   /// Returns an object for the given id, or `nil` if no object is found.
   /// - Parameter id: object id.
-  /// - Returns: object with the given id, or`nil` if no object with the given id is found.
+  /// - Returns: object with the given id, or `nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
     guard let data = store.data(forKey: key(for: id)) else { return nil }
     return try? decoder.decode(Object.self, from: data)

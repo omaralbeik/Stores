@@ -107,7 +107,7 @@ public final class MultiCoreDataStore<
     }
   }
 
-  /// Wether the store contains a saved object with the given id.
+  /// Whether the store contains a saved object with the given id.
   ///
   /// > Note: Errors thrown out by performing the Core Data requests will be ignored and logged out to
   /// console in DEBUG.
@@ -132,7 +132,7 @@ public final class MultiCoreDataStore<
   /// console in DEBUG.
   ///
   /// - Parameter id: object id.
-  /// - Returns: object with the given id, or`nil` if no object with the given id is found.
+  /// - Returns: object with the given id, or `nil` if no object with the given id is found.
   public func object(withId id: Object.ID) -> Object? {
     let request = database.entityFetchRequest(key(for: id))
     do {
