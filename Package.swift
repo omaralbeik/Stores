@@ -27,7 +27,8 @@ let package = Package(
         "Blueprints",
         "UserDefaultsStore",
         "FileSystemStore",
-        "CoreDataStore"
+        "CoreDataStore",
+        "KeychainStore"
       ],
       path: "Sources/Stores"
     ),
