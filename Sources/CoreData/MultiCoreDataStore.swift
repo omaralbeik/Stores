@@ -4,7 +4,7 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// The multi object core data store is an implementation of ``MultiObjectStore`` that offers a
+/// The multi object core data store is an implementation of `MultiObjectStore` that offers a
 /// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
 /// objects in a core data database.
 ///

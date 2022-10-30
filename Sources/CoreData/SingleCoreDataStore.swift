@@ -4,7 +4,7 @@ import Blueprints
 import CoreData
 import Foundation
 
-/// The single core data object store is an implementation of ``SingleObjectStore`` that offers a
+/// The single core data object store is an implementation of `SingleObjectStore` that offers a
 /// convenient and type-safe way to store and retrieve a single `Codable` object by saving it in a core data
 /// database.
 ///

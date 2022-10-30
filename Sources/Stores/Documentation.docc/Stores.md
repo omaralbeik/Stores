@@ -5,3 +5,11 @@ A typed key-value storage solution to store Codable types in various persistence
 ## Overview
 
 Stores tries to abstract the concept of a store and provide various implementations that can be injected in such environment and swapped easily when running tests or based on a remote flag.
+
+## Topics
+
+### Essentials
+
+- <doc:Motivation>
+- <doc:Usage>
+- <doc:Installation>
