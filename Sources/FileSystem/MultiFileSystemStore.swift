@@ -1,7 +1,7 @@
 import Blueprints
 import Foundation
 
-/// The multi object file system store is an implementation of ``MultiObjectStore`` that offers a
+/// The multi object file system store is an implementation of `MultiObjectStore` that offers a
 /// convenient and type-safe way to store and retrieve a collection of `Codable` and `Identifiable`
 /// objects as json files using the file system.
 ///

@@ -1,7 +1,7 @@
 import Blueprints
 import Foundation
 
-/// The single user defaults object store is an implementation of ``SingleObjectStore`` that offers a
+/// The single user defaults object store is an implementation of `SingleObjectStore` that offers a
 /// convenient and type-safe way to store and retrieve a single `Codable` object to a user defaults suite.
 ///
 /// > Thread safety: This is a thread-safe class.
