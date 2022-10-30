@@ -1,7 +1,15 @@
 version: 1
 builder:
   configs:
-    - documentation_targets:
+  - platform: ios
+    scheme: Stores
+  - platform: macos-xcodebuild
+    scheme: Stores
+  - platform: tvos
+    scheme: Stores
+  - platform: watchos
+    scheme: Stores
+  - documentation_targets:
       - Stores
       - Blueprints
       - UserDefaultsStore
