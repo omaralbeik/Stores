@@ -249,7 +249,7 @@ try store.removeAll()
     
 ## Documentation
 
-Read the full documentation at [Swift Package Index](https://swiftpackageindex.com/omaralbeik/Stores).
+Read the full documentation at [Swift Package Index](https://swiftpackageindex.com/omaralbeik/Stores/documentation).
 
 ---
 
