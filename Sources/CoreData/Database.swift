@@ -3,9 +3,13 @@
 import CoreData
 import Foundation
 
-private final class Container: NSPersistentContainer {
+final class Container: NSPersistentContainer {
   override class func defaultDirectoryURL() -> URL {
     super.defaultDirectoryURL().appendingPathComponent("CoreDataStore")
+  }
+
+  required init(name: String) {
+    super.init(name: name, managedObjectModel: Database.entityModel)
   }
 }
 
@@ -13,8 +17,7 @@ final class Database {
   let context: NSManagedObjectContext
   private(set) var url: URL?
 
-  init(name: String) {
-    let container = Container(name: name, managedObjectModel: Self.entityModel)
+  init(name: String, container: NSPersistentContainer) {
     context = container.viewContext
     container.loadPersistentStores { description, error in
       if let error = error {

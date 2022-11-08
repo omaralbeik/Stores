@@ -17,6 +17,11 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
 
   /// Store's unique identifier.
   ///
+  /// Note: This is used to create the underlying service name `kSecAttrService` where the object is
+  /// stored.
+  ///
+  /// `com.omaralbeik.stores.single.{identifier}`
+  ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   public let identifier: String
@@ -25,6 +30,11 @@ public final class SingleKeychainStore<Object: Codable>: SingleObjectStore {
   public let accessibility: KeychainAccessibility
 
   /// Initialize store.
+  ///
+  /// Note: This is used to create the underlying service name `kSecAttrService` where the object is
+  /// stored.
+  ///
+  /// `com.omaralbeik.stores.single.{identifier}`
   ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.

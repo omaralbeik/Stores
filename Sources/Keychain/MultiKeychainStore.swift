@@ -19,6 +19,11 @@ public final class MultiKeychainStore<
 
   /// Store's unique identifier.
   ///
+  /// Note: This is used to create the underlying service name `kSecAttrService` where objects are
+  /// stored.
+  ///
+  /// `com.omaralbeik.stores.multi.{identifier}`
+  ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   public let identifier: String
@@ -27,6 +32,11 @@ public final class MultiKeychainStore<
   public let accessibility: KeychainAccessibility
 
   /// Initialize store.
+  ///
+  /// Note: This is used to create the underlying service name `kSecAttrService` where objects are
+  /// stored.
+  ///
+  /// `com.omaralbeik.stores.multi.{identifier}`
   ///
   /// > Important: Never use the same identifier for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.

@@ -13,25 +13,34 @@ final class SingleFileSystemStoreTests: XCTestCase {
   }
 
   func testCreateStore() {
+    let directory = FileManager.SearchPathDirectory.documentDirectory
+    let path = UUID().uuidString
+    let store = createFreshUserStore(directory: directory, path: path)
+    XCTAssertEqual(store.directory, directory)
+    XCTAssertEqual(store.path, path)
+  }
+
+  func testDeprecatedCreateStore() {
     let identifier = UUID().uuidString
     let directory = FileManager.SearchPathDirectory.documentDirectory
-    let store = createFreshUserStore(
+    let store = SingleFileSystemStore<User>(
       identifier: identifier,
       directory: directory
     )
-    XCTAssertEqual(store.identifier, identifier)
-    XCTAssertEqual(store.directory, directory)
+    XCTAssertEqual(identifier, store.identifier)
+    XCTAssertEqual(directory, store.directory)
+    self.store = store
   }
 
   func testSaveObject() throws {
-    let identifier = UUID().uuidString
-    let store = createFreshUserStore(identifier: identifier)
+    let path = UUID().uuidString
+    let store = createFreshUserStore(path: path)
 
     try store.save(User.ahmad)
     XCTAssertNotNil(store.object)
     XCTAssertEqual(store.object(), User.ahmad)
 
-    let url = try url(identifier: identifier)
+    let url = try url(path: path)
     let data = try Data(contentsOf: url)
     let decodedUser = try JSONDecoder().decode(User.self, from: data)
     XCTAssertEqual(store.object(), decodedUser)
@@ -78,8 +87,8 @@ final class SingleFileSystemStoreTests: XCTestCase {
   }
 
   func testRemove() throws {
-    let identifier = UUID().uuidString
-    let store = createFreshUserStore(identifier: identifier)
+    let path = UUID().uuidString
+    let store = createFreshUserStore(path: path)
 
     try store.save(User.ahmad)
     XCTAssertNotNil(store.object)
@@ -87,7 +96,7 @@ final class SingleFileSystemStoreTests: XCTestCase {
 
     try store.remove()
 
-    let url = try url(identifier: identifier)
+    let url = try url(path: path)
     XCTAssertFalse(manager.fileExists(atPath: url.path))
   }
 }
@@ -96,8 +105,8 @@ final class SingleFileSystemStoreTests: XCTestCase {
 
 private extension SingleFileSystemStoreTests {
   func storeURL(
-    identifier: String = "user",
-    directory: FileManager.SearchPathDirectory = .cachesDirectory
+    directory: FileManager.SearchPathDirectory = .cachesDirectory,
+    path: String = "user"
   ) throws -> URL {
     return try manager.url(
       for: directory,
@@ -107,26 +116,24 @@ private extension SingleFileSystemStoreTests {
     )
     .appendingPathComponent("Stores", isDirectory: true)
     .appendingPathComponent("SingleObject", isDirectory: true)
-    .appendingPathComponent(identifier, isDirectory: true)
+    .appendingPathComponent(path, isDirectory: true)
   }
 
   func url(
-    identifier: String = "user",
-    directory: FileManager.SearchPathDirectory = .cachesDirectory
+    directory: FileManager.SearchPathDirectory = .cachesDirectory,
+    path: String = "user"
   ) throws -> URL {
-    return try storeURL(identifier: identifier, directory: directory)
+    return try storeURL(directory: directory, path: path)
       .appendingPathComponent("object")
       .appendingPathExtension("json")
   }
 
   func createFreshUserStore(
-    identifier: String = "user",
-    directory: FileManager.SearchPathDirectory = .cachesDirectory
+    directory: FileManager.SearchPathDirectory = .cachesDirectory,
+    path: String = "user"
   ) -> SingleFileSystemStore<User> {
-    let store = SingleFileSystemStore<User>(
-      identifier: identifier,
-      directory: directory
-    )
+    let store = SingleFileSystemStore<User>(directory: directory, path: path)
+    XCTAssertEqual(path, store.identifier)
     XCTAssertNoThrow(try store.remove())
     self.store = store
     return store

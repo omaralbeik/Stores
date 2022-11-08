@@ -15,32 +15,56 @@ public final class MultiFileSystemStore<
   let lock = NSRecursiveLock()
   let logger = Logger()
 
-  /// Store's unique identifier.
-  ///
-  /// > Important: Never use the same identifier for multiple stores with different object types,
-  /// doing this might cause stores to have corrupted data.
-  public let identifier: String
-
   /// Directory where the store folder is created.
   public let directory: FileManager.SearchPathDirectory
 
-  /// Initialize store with given identifier.
+  /// Store's path.
   ///
-  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// > Note: This is used to create the directory where files are saved:
+  /// >
+  /// > `{directory}/Stores/MultiObjects/{path}/{ID}.json`
+  ///
+  /// > Important: Never use the same path for multiple stores with different object types,
+  /// doing this might cause stores to have corrupted data.
+  public let path: String
+
+  /// Initialize store with given directory and path.
+  ///
+  /// > Important: Never use the same path for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   ///
-  /// - Parameter identifier: store's unique identifier.
   /// - Parameter directory: directory where the store folder is created.
   /// Defaults to `.applicationSupportDirectory`
+  /// - Parameter path: store's path.
   ///
-  /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
-  /// with a same identifier and directory.
+  /// > Note: Directory and path are used to create the directory where files are saved:
+  /// >
+  /// > `{directory}/Stores/MultiObjects/{path}/{ID}.json`
+  /// >
+  /// > Creating a store is a fairly cheap operation, you can create multiple instances of the same store
+  /// with a same directory and path.
+  public required init(
+    directory: FileManager.SearchPathDirectory = .applicationSupportDirectory,
+    path: String
+  ) {
+    self.directory = directory
+    self.path = path
+  }
+
+  // MARK: - Deprecated
+
+  /// Deprecated: Store's unique identifier.
+  @available(*, deprecated, renamed: "path")
+  public var identifier: String { path }
+
+  /// Deprecated: Initialize store with given identifier and directory.
+  @available(*, deprecated, renamed: "init(directory:path:)")
   public required init(
     identifier: String,
     directory: FileManager.SearchPathDirectory = .applicationSupportDirectory
   ) {
-    self.identifier = identifier
     self.directory = directory
+    self.path = identifier
   }
 
   // MARK: - MultiObjectStore
@@ -203,7 +227,7 @@ extension MultiFileSystemStore {
       )
       .appendingPathComponent("Stores", isDirectory: true)
       .appendingPathComponent("MultiObjects", isDirectory: true)
-      .appendingPathComponent(identifier, isDirectory: true)
+      .appendingPathComponent(path, isDirectory: true)
     if manager.fileExists(atPath: url.path) == false {
       try manager.createDirectory(
         atPath: url.path,

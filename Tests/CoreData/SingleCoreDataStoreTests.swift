@@ -20,6 +20,19 @@ final class SingleCoreDataStoreTests: XCTestCase {
     XCTAssertEqual(store.databaseName, databaseName)
   }
 
+
+  func testCreateStoreWithCustomContainer() {
+    let databaseName = UUID().uuidString
+    let store = SingleCoreDataStore<User>(databaseName: databaseName) { model in
+      TestContainer(name: databaseName, managedObjectModel: model)
+    }
+    self.store = store
+
+    let path = store.databaseURL?.pathComponents.suffix(2).joined(separator: "/")
+    let expectedPath = "Test/\(databaseName).sqlite"
+    XCTAssertEqual(path, expectedPath)
+  }
+
   func testDatabaseURL() {
     let store = createFreshUserStore()
     let path = store.databaseURL?.pathComponents.suffix(2)

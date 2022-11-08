@@ -29,12 +29,22 @@ public final class SingleCoreDataStore<Object: Codable>: SingleObjectStore {
   /// doing this might cause stores to have corrupted data.
   ///
   /// - Parameter databaseName: store's database name.
+  /// - Parameter containerProvider: Optional closure that can be used to provide a custom
+  /// provider for the given entity model. Defaults to `nil` which uses the default container.
+  ///
+  /// > Important: If you decided to use a custom container, do not forget to set containers's
+  /// `managedObjectModel` to the provided model.
   ///
   /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
   /// with a same database name.
-  public init(databaseName: String) {
+  public init(
+    databaseName: String,
+    containerProvider: ((NSManagedObjectModel) -> NSPersistentContainer)? = nil
+  ) {
     self.databaseName = databaseName
-    database = .init(name: databaseName)
+    let container = containerProvider?(Database.entityModel)
+    ?? Container(name: databaseName)
+    database = .init(name: databaseName, container: container)
   }
 
   /// URL for where the core data SQLite database is stored.

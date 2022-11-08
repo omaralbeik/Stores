@@ -12,9 +12,16 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
   }
 
   func testCreateStore() {
+    let suiteName = UUID().uuidString
+    let store = createFreshUsersStore(suiteName: suiteName)
+    XCTAssertEqual(store.suiteName, suiteName)
+  }
+
+  func testDeprecatedCreateStore() {
     let identifier = UUID().uuidString
-    let store = createFreshUsersStore(identifier: identifier)
-    XCTAssertEqual(store.identifier, identifier)
+    let store = MultiUserDefaultsStore<User>(identifier: identifier)
+    XCTAssertEqual(identifier, store.identifier)
+    self.store = store
   }
 
   func testSaveObject() throws {
@@ -211,9 +218,10 @@ final class MultiUserDefaultsStoreTests: XCTestCase {
 
 private extension MultiUserDefaultsStoreTests {
   func createFreshUsersStore(
-    identifier: String = "users"
+    suiteName: String = "users"
   ) -> MultiUserDefaultsStore<User> {
-    let store = MultiUserDefaultsStore<User>(identifier: identifier)
+    let store = MultiUserDefaultsStore<User>(suiteName: suiteName)
+    XCTAssertEqual(suiteName, store.identifier)
     store.removeAll()
     self.store = store
     return store

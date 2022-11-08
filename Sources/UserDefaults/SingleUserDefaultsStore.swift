@@ -12,33 +12,52 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   let lock = NSRecursiveLock()
   let key = "object"
 
-  /// Store's unique identifier.
+  /// Store's suite name.
   ///
   /// > Note: This is used as the suite name for the underlying UserDefaults store.
   ///
-  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// > Important: Never use the same suite name for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
-  public let identifier: String
+  public let suiteName: String
 
-  /// Initialize store with given identifier.
+  /// Initialize store with given suite name.
   ///
   /// > Note: This is used as the suite name for the underlying UserDefaults store. Using an invalid name like
   /// `default` will cause a precondition failure.
   ///
-  /// > Important: Never use the same identifier for multiple stores with different object types,
+  /// > Important: Never use the same suite name for multiple stores with different object types,
   /// doing this might cause stores to have corrupted data.
   ///
-  /// - Parameter identifier: store's unique identifier.
+  /// - Parameter suiteName: store's suite name.
   ///
   /// > Note: Creating a store is a fairly cheap operation, you can create multiple instances of the same store
-  /// with a same identifier.
+  /// with a same suiteName.
+  public required init(suiteName: String) {
+    guard let store = UserDefaults(suiteName: suiteName) else {
+      preconditionFailure(
+        "Can not create store with suiteName: '\(suiteName)'."
+      )
+    }
+    self.suiteName = suiteName
+    self.store = store
+  }
+
+
+  // MARK: - Deprecated
+
+  /// Deprecated: Store's unique identifier.
+  @available(*, deprecated, renamed: "suiteName")
+  public var identifier: String { suiteName }
+
+  /// Deprecated: Initialize store with given identifier.
+  @available(*, deprecated, renamed: "init(suiteName:)")
   public required init(identifier: String) {
     guard let store = UserDefaults(suiteName: identifier) else {
       preconditionFailure(
         "Can not create store with identifier: '\(identifier)'."
       )
     }
-    self.identifier = identifier
+    self.suiteName = identifier
     self.store = store
   }
 
@@ -62,10 +81,13 @@ public final class SingleUserDefaultsStore<Object: Codable>: SingleObjectStore {
   }
 
   /// Removes any saved object in the store.
+  ///
+  /// > Note: This removes the entire persistent domain for the underlying UserDefaults store.
+  ///
   public func remove() {
     sync {
-      store.removePersistentDomain(forName: identifier)
-      store.removeSuite(named: identifier)
+      store.removePersistentDomain(forName: suiteName)
+      store.removeSuite(named: suiteName)
     }
   }
 }
