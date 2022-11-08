@@ -73,10 +73,10 @@ Stores comes pre-equipped with the following stores:
 
 ```swift
 // Store for multiple objects
-let store = MultiUserDefaultsStore<User>(identifier: "users")
+let store = MultiUserDefaultsStore<User>(suiteName: "users")
 
 // Store for a single object
-let store = SingleUserDefaultsStore<User>(identifier: "users")
+let store = SingleUserDefaultsStore<User>(suiteName: "users")
 ```
 </details>
 </li>
@@ -87,10 +87,10 @@ let store = SingleUserDefaultsStore<User>(identifier: "users")
 
 ```swift
 // Store for multiple objects
-let store = MultiFileSystemStore<User>(identifier: "users")
+let store = MultiFileSystemStore<User>(path: "users")
 
 // Store for a single object
-let store = SingleFileSystemStore<User>(identifier: "users")
+let store = SingleFileSystemStore<User>(path: "users")
 ```
 </details>
 </li>
@@ -101,10 +101,10 @@ let store = SingleFileSystemStore<User>(identifier: "users")
 
 ```swift
 // Store for multiple objects
-let store = MultiCoreDataStore<User>(identifier: "users")
+let store = MultiCoreDataStore<User>(databaseName: "users")
 
 // Store for a single object
-let store = SingleCoreDataStore<User>(identifier: "users")
+let store = SingleCoreDataStore<User>(databaseName: "users")
 ```
 </details>
 </li>

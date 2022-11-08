@@ -15,14 +15,23 @@ final class MultiFileSystemStoreTests: XCTestCase {
   }
 
   func testCreateStore() {
+    let directory = FileManager.SearchPathDirectory.documentDirectory
+    let path = UUID().uuidString
+    let store = createFreshUsersStore(directory: directory, path: path)
+    XCTAssertEqual(store.directory, directory)
+    XCTAssertEqual(store.path, path)
+  }
+
+  func testDeprecatedCreateStore() {
     let identifier = UUID().uuidString
     let directory = FileManager.SearchPathDirectory.documentDirectory
-    let store = createFreshUsersStore(
+    let store = MultiFileSystemStore<User>(
       identifier: identifier,
       directory: directory
     )
-    XCTAssertEqual(store.identifier, identifier)
-    XCTAssertEqual(store.directory, directory)
+    XCTAssertEqual(identifier, store.identifier)
+    XCTAssertEqual(directory, store.directory)
+    self.store = store
   }
 
   func testSaveObject() throws {
@@ -304,8 +313,8 @@ final class MultiFileSystemStoreTests: XCTestCase {
 
 private extension MultiFileSystemStoreTests {
   func storeURL(
-    identifier: String = "users",
-    directory: FileManager.SearchPathDirectory = .cachesDirectory
+    directory: FileManager.SearchPathDirectory = .cachesDirectory,
+    path: String = "users"
   ) throws -> URL {
     return try manager.url(
       for: directory,
@@ -315,7 +324,7 @@ private extension MultiFileSystemStoreTests {
     )
     .appendingPathComponent("Stores", isDirectory: true)
     .appendingPathComponent("MultiObjects", isDirectory: true)
-    .appendingPathComponent(identifier, isDirectory: true)
+    .appendingPathComponent(path, isDirectory: true)
   }
 
   func url(forUserWithId id: User.ID) throws -> URL {
@@ -354,13 +363,11 @@ private extension MultiFileSystemStoreTests {
   }
 
   func createFreshUsersStore(
-    identifier: String = "users",
-    directory: FileManager.SearchPathDirectory = .cachesDirectory
+    directory: FileManager.SearchPathDirectory = .cachesDirectory,
+    path: String = "users"
   ) -> MultiFileSystemStore<User> {
-    let store = MultiFileSystemStore<User>(
-      identifier: identifier,
-      directory: directory
-    )
+    let store = MultiFileSystemStore<User>(directory: directory, path: path)
+    XCTAssertEqual(path, store.identifier)
     XCTAssertNoThrow(try store.removeAll())
     self.store = store
     return store

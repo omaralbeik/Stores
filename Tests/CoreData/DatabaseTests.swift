@@ -33,7 +33,7 @@ final class DatabaseTests: XCTestCase {
   }
 
   func testEntitiesFetchRequest() {
-    let database = Database(name: "test")
+    let database = Database(name: "test", container: Container(name: "test"))
     let request = database.entitiesFetchRequest()
     XCTAssertEqual(request.entityName, "Entity")
     XCTAssertEqual(
@@ -43,7 +43,7 @@ final class DatabaseTests: XCTestCase {
   }
 
   func testEntityFetchRequest() {
-    let database = Database(name: "test")
+    let database = Database(name: "test", container: Container(name: "test"))
     let id = "test-id"
     let request = database.entityFetchRequest(id)
     XCTAssertEqual(request.entityName, "Entity")
@@ -52,6 +52,12 @@ final class DatabaseTests: XCTestCase {
       NSPredicate(format: "id == %@", id)
     )
     XCTAssertEqual(request.fetchLimit, 1)
+  }
+}
+
+final class TestContainer: NSPersistentContainer {
+  override class func defaultDirectoryURL() -> URL {
+    super.defaultDirectoryURL().appendingPathComponent("Test")
   }
 }
 
