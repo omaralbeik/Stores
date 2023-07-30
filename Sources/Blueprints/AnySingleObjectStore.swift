@@ -5,12 +5,14 @@ public final class AnySingleObjectStore<Object: Codable>: SingleObjectStore {
   public init<Store: SingleObjectStore>(
     _ store: Store
   ) where Store.Object == Object {
+    _store = store
     _save = { try store.save($0) }
     _saveOptional = { try store.save($0) }
     _object = { store.object() }
     _remove = { try store.remove() }
   }
 
+  private let _store: any SingleObjectStore
   private let _save: (Object) throws -> Void
   private let _saveOptional: (Object?) throws -> Void
   private let _object: () -> Object?
