@@ -7,6 +7,7 @@ public final class AnyMultiObjectStore<
   public init<Store: MultiObjectStore>(
     _ store: Store
   ) where Store.Object == Object {
+    _store = store
     _save = { try store.save($0) }
     _saveOptional = { try store.save($0) }
     _saveObjects = { try store.save($0) }
@@ -20,6 +21,7 @@ public final class AnyMultiObjectStore<
     _removeAll = { try store.removeAll() }
   }
 
+  private let _store: any MultiObjectStore
   private let _save: (Object) throws -> Void
   private let _saveOptional: (Object?) throws -> Void
   private let _saveObjects: ([Object]) throws -> Void
