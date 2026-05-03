@@ -29,8 +29,50 @@ It all boils down to the two protocols [`SingleObjectStore`](https://github.com/
 
 The two protocols are then implemented in the different modules as explained in the chart below:
 
-![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores-light.png#gh-light-mode-only)
-![Modules chart](https://raw.githubusercontent.com/omaralbeik/Stores/main/Assets/stores-dark.png#gh-dark-mode-only)
+```mermaid
+graph TD
+    subgraph Blueprints
+        SOS[SingleObjectStore]
+        MOS[MultiObjectStore]
+    end
+
+    subgraph UserDefaultsStore
+        SUD[SingleUserDefaultsStore]
+        MUD[MultiUserDefaultsStore]
+    end
+
+    subgraph FileSystemStore
+        SFS[SingleFileSystemStore]
+        MFS[MultiFileSystemStore]
+    end
+
+    subgraph CoreDataStore
+        SCD[SingleCoreDataStore]
+        MCD[MultiCoreDataStore]
+    end
+
+    subgraph KeychainStore
+        SKC[SingleKeychainStore]
+        MKC[MultiKeychainStore]
+    end
+
+    subgraph TestUtils
+        SOSF[SingleObjectStoreFake]
+        MOSF[MultiObjectStoreFake]
+    end
+
+    SUD --> SOS
+    SFS --> SOS
+    SCD --> SOS
+    SKC --> SOS
+    SOSF --> SOS
+
+    MUD --> MOS
+    MFS --> MOS
+    MCD --> MOS
+    MKC --> MOS
+    MOSF --> MOS
+```
 
 ---
 
