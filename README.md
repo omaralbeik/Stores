@@ -35,56 +35,42 @@ graph TB
     classDef erased fill:#FFCC80,stroke:#E65100,stroke-width:2px,color:#000
     classDef impl fill:#90CAF9,stroke:#1565C0,stroke-width:2px,color:#000
     classDef fake fill:#CE93D8,stroke:#6A1B9A,stroke-width:2px,color:#000
-    classDef module fill:transparent,stroke:#888,stroke-width:1px,stroke-dasharray:4 3
 
-    subgraph BP[Blueprints]
+    subgraph SINGLE["&nbsp;Single Object Stores&nbsp;"]
+        direction TB
         SOS["SingleObjectStore<br/>«protocol»"]:::protocol
-        MOS["MultiObjectStore<br/>«protocol»"]:::protocol
         ASOS["AnySingleObjectStore<br/>«type-erased»"]:::erased
+        SUD["SingleUserDefaultsStore<br/>(UserDefaultsStore)"]:::impl
+        SFS["SingleFileSystemStore<br/>(FileSystemStore)"]:::impl
+        SCD["SingleCoreDataStore<br/>(CoreDataStore)"]:::impl
+        SKC["SingleKeychainStore<br/>(KeychainStore)"]:::impl
+        SOSF["SingleObjectStoreFake<br/>(TestUtils)"]:::fake
+
+        ASOS -. wraps .-> SOS
+        SUD ==> SOS
+        SFS ==> SOS
+        SCD ==> SOS
+        SKC ==> SOS
+        SOSF ==> SOS
+    end
+
+    subgraph MULTI["&nbsp;Multi Object Stores&nbsp;"]
+        direction TB
+        MOS["MultiObjectStore<br/>«protocol»"]:::protocol
         AMOS["AnyMultiObjectStore<br/>«type-erased»"]:::erased
+        MUD["MultiUserDefaultsStore<br/>(UserDefaultsStore)"]:::impl
+        MFS["MultiFileSystemStore<br/>(FileSystemStore)"]:::impl
+        MCD["MultiCoreDataStore<br/>(CoreDataStore)"]:::impl
+        MKC["MultiKeychainStore<br/>(KeychainStore)"]:::impl
+        MOSF["MultiObjectStoreFake<br/>(TestUtils)"]:::fake
+
+        AMOS -. wraps .-> MOS
+        MUD ==> MOS
+        MFS ==> MOS
+        MCD ==> MOS
+        MKC ==> MOS
+        MOSF ==> MOS
     end
-
-    subgraph UDS[UserDefaultsStore]
-        SUD["SingleUserDefaultsStore"]:::impl
-        MUD["MultiUserDefaultsStore"]:::impl
-    end
-
-    subgraph FSS[FileSystemStore]
-        SFS["SingleFileSystemStore"]:::impl
-        MFS["MultiFileSystemStore"]:::impl
-    end
-
-    subgraph CDS[CoreDataStore]
-        SCD["SingleCoreDataStore"]:::impl
-        MCD["MultiCoreDataStore"]:::impl
-    end
-
-    subgraph KCS[KeychainStore]
-        SKC["SingleKeychainStore"]:::impl
-        MKC["MultiKeychainStore"]:::impl
-    end
-
-    subgraph TU[TestUtils]
-        SOSF["SingleObjectStoreFake"]:::fake
-        MOSF["MultiObjectStoreFake"]:::fake
-    end
-
-    class BP,UDS,FSS,CDS,KCS,TU module
-
-    ASOS -. wraps .-> SOS
-    AMOS -. wraps .-> MOS
-
-    SUD ==> SOS
-    SFS ==> SOS
-    SCD ==> SOS
-    SKC ==> SOS
-    SOSF ==> SOS
-
-    MUD ==> MOS
-    MFS ==> MOS
-    MCD ==> MOS
-    MKC ==> MOS
-    MOSF ==> MOS
 ```
 
 ---
