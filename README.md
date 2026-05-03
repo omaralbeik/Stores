@@ -30,48 +30,61 @@ It all boils down to the two protocols [`SingleObjectStore`](https://github.com/
 The two protocols are then implemented in the different modules as explained in the chart below:
 
 ```mermaid
-graph TD
-    subgraph Blueprints
-        SOS[SingleObjectStore]
-        MOS[MultiObjectStore]
+graph TB
+    classDef protocol fill:#FFE082,stroke:#F57C00,stroke-width:2px,color:#000
+    classDef erased fill:#FFCC80,stroke:#E65100,stroke-width:2px,color:#000
+    classDef impl fill:#90CAF9,stroke:#1565C0,stroke-width:2px,color:#000
+    classDef fake fill:#CE93D8,stroke:#6A1B9A,stroke-width:2px,color:#000
+    classDef module fill:transparent,stroke:#888,stroke-width:1px,stroke-dasharray:4 3
+
+    subgraph BP[Blueprints]
+        SOS["SingleObjectStore<br/>«protocol»"]:::protocol
+        MOS["MultiObjectStore<br/>«protocol»"]:::protocol
+        ASOS["AnySingleObjectStore<br/>«type-erased»"]:::erased
+        AMOS["AnyMultiObjectStore<br/>«type-erased»"]:::erased
     end
 
-    subgraph UserDefaultsStore
-        SUD[SingleUserDefaultsStore]
-        MUD[MultiUserDefaultsStore]
+    subgraph UDS[UserDefaultsStore]
+        SUD["SingleUserDefaultsStore"]:::impl
+        MUD["MultiUserDefaultsStore"]:::impl
     end
 
-    subgraph FileSystemStore
-        SFS[SingleFileSystemStore]
-        MFS[MultiFileSystemStore]
+    subgraph FSS[FileSystemStore]
+        SFS["SingleFileSystemStore"]:::impl
+        MFS["MultiFileSystemStore"]:::impl
     end
 
-    subgraph CoreDataStore
-        SCD[SingleCoreDataStore]
-        MCD[MultiCoreDataStore]
+    subgraph CDS[CoreDataStore]
+        SCD["SingleCoreDataStore"]:::impl
+        MCD["MultiCoreDataStore"]:::impl
     end
 
-    subgraph KeychainStore
-        SKC[SingleKeychainStore]
-        MKC[MultiKeychainStore]
+    subgraph KCS[KeychainStore]
+        SKC["SingleKeychainStore"]:::impl
+        MKC["MultiKeychainStore"]:::impl
     end
 
-    subgraph TestUtils
-        SOSF[SingleObjectStoreFake]
-        MOSF[MultiObjectStoreFake]
+    subgraph TU[TestUtils]
+        SOSF["SingleObjectStoreFake"]:::fake
+        MOSF["MultiObjectStoreFake"]:::fake
     end
 
-    SUD --> SOS
-    SFS --> SOS
-    SCD --> SOS
-    SKC --> SOS
-    SOSF --> SOS
+    class BP,UDS,FSS,CDS,KCS,TU module
 
-    MUD --> MOS
-    MFS --> MOS
-    MCD --> MOS
-    MKC --> MOS
-    MOSF --> MOS
+    ASOS -. wraps .-> SOS
+    AMOS -. wraps .-> MOS
+
+    SUD ==> SOS
+    SFS ==> SOS
+    SCD ==> SOS
+    SKC ==> SOS
+    SOSF ==> SOS
+
+    MUD ==> MOS
+    MFS ==> MOS
+    MCD ==> MOS
+    MKC ==> MOS
+    MOSF ==> MOS
 ```
 
 ---
